@@ -56,8 +56,8 @@ def edit_price(price):
         popup = browser.find_element(By.CLASS_NAME, 'andes-modal-dialog__wrapper')
         popup.find_elements(By.CLASS_NAME, 'andes-button__content')[0].click()
     except NoSuchElementException:
-        sleep(3)
-    sleep(2)
+        sleep(1)
+    sleep(4)
 
 
 def edit_tech():
@@ -88,7 +88,7 @@ def edit_tech():
             print('Error, input type new o unrecognized')
         sleep(.2)
 
-    y_n = input('Confirm? Y/N')
+    # y_n = input('Confirm? Y/N')
     try:
         browser.find_elements(By.CLASS_NAME, 'andes-button__content')[2].click()
     except ElementClickInterceptedException:

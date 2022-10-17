@@ -21,6 +21,8 @@ def load_cookie():
 
 
 def find_publication(search):
+    search_bar = browser.find_element(By.CLASS_NAME, 'andes-form-control__field')
+    search_button = browser.find_element(By.CLASS_NAME, 'sc-hover-button__icon')
     search_bar.send_keys(search)
     search_button.click()
     print(f'searching for {search_for}')
@@ -112,8 +114,6 @@ if __name__ == '__main__':
         save_cookie()
 
     browser.get('https://www.mercadolibre.com.ar/publicaciones/listado')
-    search_bar = browser.find_element(By.CLASS_NAME, 'andes-form-control__field')
-    search_button = browser.find_element(By.CLASS_NAME, 'sc-hover-button__icon')
     sleep(1)
     filter_button = browser.find_element(By.CLASS_NAME, 'sc-tags-container__title__text')
     filter_button.click()
@@ -171,4 +171,5 @@ enter the number of choice:""")
                     edit_tech()
             browser.back()
         elif choice == 0:
+            browser.close()
             exit()

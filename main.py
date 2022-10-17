@@ -23,6 +23,7 @@ def load_cookie():
 def find_publication(search):
     search_bar = browser.find_element(By.CLASS_NAME, 'andes-form-control__field')
     search_button = browser.find_element(By.CLASS_NAME, 'sc-hover-button__icon')
+    search_bar.clear()
     search_bar.send_keys(search)
     search_button.click()
     print(f'searching for {search_for}')
@@ -135,8 +136,8 @@ Your options are:
 0)Exit Program
 
 enter the number of choice:""")
-        choice = int(input())
-        if choice == 1:
+        choice = input()
+        if choice == '1':
             search_for = input('publi ID or Title: ')
             price = input('New price: ')
             tech = input('edit specs(Y/N)')
@@ -145,12 +146,12 @@ enter the number of choice:""")
             if tech == "Y" or tech == "y":
                 edit_tech()
             browser.back()
-        elif choice == 2:
+        elif choice == '2':
             search_for = input('publi ID or Title: ')
             find_publication(search_for)
             edit_tech()
             browser.back()
-        elif choice == 3:
+        elif choice == '3':
             search_for = input('publi ID or Title: ')
             stock_change = input('Enter Stock change: ')
             change_price = input('should we change the price?(Y/N)')
@@ -170,6 +171,9 @@ enter the number of choice:""")
                 if tech == "Y" or tech == "y":
                     edit_tech()
             browser.back()
-        elif choice == 0:
+        elif choice == '0':
             browser.close()
             exit()
+
+        else:
+            pass

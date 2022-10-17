@@ -1,7 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException
+from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, WebDriverException
 import pickle
 from time import sleep
 
@@ -89,8 +89,19 @@ def change_stock(delta):
     stock.send_keys(Keys.BACKSPACE * 5 + str(new_stock))
 
 
+def open_driver():
+    try:
+        driver = webdriver.Chrome()
+    except WebDriverException:
+
+        option = webdriver.ChromeOptions()
+        option.binary_location = r'C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe'
+        driver = webdriver.Chrome(options=option)
+    return driver
+
+
 if __name__ == '__main__':
-    browser = webdriver.Chrome()
+    browser = open_driver()
     browser.get('https://www.mercadolibre.com.ar')
     try:
         load_cookie()

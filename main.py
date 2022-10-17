@@ -6,18 +6,6 @@ import pickle
 from time import sleep
 
 
-def test_login():
-    login = browser.find_element(By.NAME, 'user_id')
-    login.send_keys('tete6762117')
-    continuar = browser.find_element(By.CLASS_NAME, 'andes-button__content')
-    continuar.click()
-    sleep(2)
-    password = browser.find_element(By.NAME, 'password')
-    password.send_keys('qatest8742')
-    ingresar = browser.find_element(By.NAME, 'action')
-    ingresar.click()
-
-
 def save_cookie():
     with open("cookie", 'wb') as filehandler:
         pickle.dump(browser.get_cookies(), filehandler)

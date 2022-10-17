@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException
 import pickle
 from time import sleep
 
@@ -17,29 +18,46 @@ def test_login():
     ingresar.click()
 
 
-def save_cookie(browser):
+def save_cookie():
     with open("cookie", 'wb') as filehandler:
         pickle.dump(browser.get_cookies(), filehandler)
 
 
-def load_cookie(browser):
+def load_cookie():
     with open("cookie", 'rb') as cookiesfile:
         cookies = pickle.load(cookiesfile)
         for cookie in cookies:
-            print(cookie)
+            # print(cookie)
             browser.add_cookie(cookie)
+        print('Cookies loaded correctly')
 
 
-def edit_price():
-    new_price = input('enter new price: ')
-    edit_price_button = browser.find_element(By.CLASS_NAME, 'sc-list-actionable-cell__action')
+def find_publication(search):
+    search_bar.send_keys(search)
+    search_button.click()
+    print(f'searching for {search_for}')
+    sleep(1.5)
+    edit_price_button = browser.find_element(By.CLASS_NAME, 'sc-list-item-row-description__title')
     edit_price_button.click()
+    sleep(2)
+
+
+def edit_price(price):
+    price_view = browser.find_elements(By.CLASS_NAME, 'sell-ui-card-header-icon')[1]
+    price_view.click()
     sleep(2)
     edits = browser.find_elements(By.CLASS_NAME, 'andes-form-control__control')
     price_to_edit = edits[3].find_element(By.CLASS_NAME, 'andes-form-control__field')
-    price_to_edit.send_keys(Keys.BACKSPACE * 6 + new_price)
+    price_to_edit.send_keys(Keys.BACKSPACE * 6 + price)
     confirm = browser.find_elements(By.CLASS_NAME, 'andes-button__content')[2]
     confirm.click()
+    sleep(2)
+    try:
+        popup = browser.find_element(By.CLASS_NAME, 'andes-modal-dialog__wrapper')
+        popup.find_elements(By.CLASS_NAME, 'andes-button__content')[0].click()
+    except NoSuchElementException:
+        sleep(3)
+    sleep(2)
 
 
 def edit_tech():
@@ -71,18 +89,22 @@ def edit_tech():
         sleep(.2)
 
     y_n = input('Confirm? Y/N')
-    browser.find_elements(By.CLASS_NAME, 'andes-button__content')[2].click()
+    try:
+        browser.find_elements(By.CLASS_NAME, 'andes-button__content')[2].click()
+    except ElementClickInterceptedException:
+        print('Form not submitted')
+        pass
 
 
 if __name__ == '__main__':
     browser = webdriver.Chrome()
     browser.get('https://www.mercadolibre.com.ar')
     try:
-        load_cookie(browser)
+        load_cookie()
     except FileNotFoundError:
         print('Please log in manually on automated web driver.')
         input('Once that is done press enter on console...')
-        save_cookie(browser)
+        save_cookie()
 
     browser.get('https://www.mercadolibre.com.ar/publicaciones/listado')
     search_bar = browser.find_element(By.CLASS_NAME, 'andes-form-control__field')
@@ -93,11 +115,27 @@ if __name__ == '__main__':
     clear_filters = [a for a in browser.find_elements(By.CLASS_NAME, 'andes-button__content') if
                      a.text == 'Limpiar filtros']
     clear_filters[0].click()
-    search_for = input('publi ID or Title: ')  # Should be a prompt to ask what to do, edit stock, change price, etc.
-    search_bar.send_keys(search_for)
-    search_button.click()
-    print(f'searching for {search_for}')
-    sleep(1.5)
-    edit_price()
-    sleep(5)
-    edit_tech()
+    while True:
+        print("""Welcome to AutoMeli with Selenium!
+Your options are:
+
+1)Change Price
+2)Fill Tech Specs
+3)Adjust Stock
+
+enter the number of choice:""")
+        choice = int(input())
+        if choice == 1:
+            search_for = input('publi ID or Title: ')
+            price = input('New price: ')
+            tech = input('edit specs(Y/N)')
+            find_publication(search_for)
+            edit_price(price)
+            if tech == "Y" or tech == "y":
+                edit_tech()
+            browser.back()
+        elif choice == 2:
+            search_for = input('publi ID or Title: ')
+            find_publication(search_for)
+            edit_tech()
+            browser.back()

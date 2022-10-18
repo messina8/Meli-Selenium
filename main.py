@@ -90,6 +90,8 @@ def change_stock(delta):
     stock = browser.find_element(By.ID, 'quantity')
     new_stock = int(stock.get_attribute('value')) + int(delta)
     stock.send_keys(Keys.BACKSPACE * 5 + str(new_stock))
+    browser.find_elements(By.CLASS_NAME, 'andes-button__content')[0].click()
+    sleep(2)
 
 
 def handle_stock():
@@ -156,12 +158,16 @@ enter the number of choice:""")
             edit_price(price)
             if tech == "Y" or tech == "y":
                 edit_tech()
-            browser.back()
+            browser.get('https://www.mercadolibre.com.ar/publicaciones/listado')
+            sleep(1)
+            clear_filters()
         elif choice == '2':
             search_for = input('publi ID or Title: ')
             find_publication(search_for)
             edit_tech()
-            browser.back()
+            browser.get('https://www.mercadolibre.com.ar/publicaciones/listado')
+            sleep(1)
+            clear_filters()
         elif choice == '3':
             search_for = input('publi ID or Title: ')
             stock_change = input('Enter Stock change: ')
@@ -181,7 +187,9 @@ enter the number of choice:""")
                 change_stock(stock_change)
                 if tech == "Y" or tech == "y":
                     edit_tech()
-            browser.back()
+            browser.get('https://www.mercadolibre.com.ar/publicaciones/listado')
+            sleep(1)
+            clear_filters()
         elif choice == '0':
             browser.close()
             exit()

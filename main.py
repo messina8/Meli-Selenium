@@ -92,6 +92,12 @@ def change_stock(delta):
     stock.send_keys(Keys.BACKSPACE * 5 + str(new_stock))
 
 
+def handle_stock():
+    first_result = browser.find_elements(By.CLASS_NAME, 'sc-list-item-row sc-list-item-row--active')[0]
+    stock = first_result.find_element(By.CLASS_NAME, 'sc-list-item-row-description__info')
+    # Work in Progress
+
+
 def open_driver():
     try:
         driver = webdriver.Chrome()
@@ -101,6 +107,20 @@ def open_driver():
         option.binary_location = r'C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe'
         driver = webdriver.Chrome(options=option)
     return driver
+
+
+def clear_filters():
+    try:
+        filter_button = browser.find_element(By.CLASS_NAME, 'sc-tags-container__title__text')
+        filter_button.click()
+        clear_all = [a for a in browser.find_elements(By.CLASS_NAME, 'andes-button__content') if
+                     a.text == 'Limpiar filtros']
+        clear_all[0].click()
+    except IndexError:
+        filters = browser.find_elements(By.CLASS_NAME, 'andes-tag__close-icon')
+        for i in reversed(filters):
+            i.click()
+            sleep(1.5)
 
 
 if __name__ == '__main__':
@@ -116,16 +136,7 @@ if __name__ == '__main__':
 
     browser.get('https://www.mercadolibre.com.ar/publicaciones/listado')
     sleep(1)
-    filter_button = browser.find_element(By.CLASS_NAME, 'sc-tags-container__title__text')
-    filter_button.click()
-    try:
-        clear_filters = [a for a in browser.find_elements(By.CLASS_NAME, 'andes-button__content') if
-                         a.text == 'Limpiar filtros']
-        clear_filters[0].click()
-    except IndexError:
-        clear_filters = browser.find_elements(By.CLASS_NAME, 'andes-tag__close-icon')
-        for i in clear_filters:
-            i.click()
+    clear_filters()
     while True:
         print("""Welcome to AutoMeli with Selenium!
 Your options are:

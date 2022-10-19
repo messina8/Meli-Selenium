@@ -24,7 +24,7 @@ def find_publication(search):
     search_bar = browser.find_element(By.CLASS_NAME, 'andes-form-control__field')
     search_button = browser.find_element(By.CLASS_NAME, 'sc-hover-button__icon')
     search_bar.clear()
-    search_bar.send_keys(search)
+    search_bar.send_keys(Keys.BACKSPACE * 35 + search)
     search_button.click()
     print(f'searching for {search_for}')
     sleep(2.5)
@@ -139,8 +139,9 @@ if __name__ == '__main__':
     browser.get('https://www.mercadolibre.com.ar/publicaciones/listado')
     sleep(1)
     clear_filters()
+    print('Welcome to AutoMeli with Selenium!')
     while True:
-        print("""Welcome to AutoMeli with Selenium!
+        print("""
 Your options are:
 
 1)Change Price
@@ -158,38 +159,32 @@ enter the number of choice:""")
             edit_price(price)
             if tech == "Y" or tech == "y":
                 edit_tech()
-            browser.get('https://www.mercadolibre.com.ar/publicaciones/listado')
-            sleep(1)
-            clear_filters()
+            browser.back()
         elif choice == '2':
             search_for = input('publi ID or Title: ')
             find_publication(search_for)
             edit_tech()
-            browser.get('https://www.mercadolibre.com.ar/publicaciones/listado')
-            sleep(1)
-            clear_filters()
+            browser.back()
         elif choice == '3':
             search_for = input('publi ID or Title: ')
             stock_change = input('Enter Stock change: ')
-            change_price = input('should we change the price?(Y/N)')
+            change_price = input('should we change the price?(Y/N): ')
             if change_price == "Y" or change_price == "y":
                 change_price = True
                 price = input('New price: ')
-                tech = input('edit specs(Y/N)')
+                tech = input('edit specs(Y/N): ')
                 find_publication(search_for)
                 change_stock(stock_change)
                 edit_price(price)
                 if tech == "Y" or tech == "y":
                     edit_tech()
             else:
-                tech = input('edit specs(Y/N)')
+                tech = input('edit specs(Y/N): ')
                 find_publication(search_for)
                 change_stock(stock_change)
                 if tech == "Y" or tech == "y":
                     edit_tech()
-            browser.get('https://www.mercadolibre.com.ar/publicaciones/listado')
-            sleep(1)
-            clear_filters()
+            browser.back()
         elif choice == '0':
             browser.close()
             exit()

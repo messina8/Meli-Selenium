@@ -91,7 +91,7 @@ def change_stock(delta):
     new_stock = int(stock.get_attribute('value')) + int(delta)
     stock.send_keys(Keys.BACKSPACE * 5 + str(new_stock))
     browser.find_elements(By.CLASS_NAME, 'andes-button__content')[0].click()
-    sleep(2)
+    sleep(3)
 
 
 def handle_stock():

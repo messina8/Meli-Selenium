@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, WebDriverException
+
 import pickle
 from time import sleep
 
@@ -188,6 +189,10 @@ enter the number of choice:""")
         elif choice == '0':
             browser.close()
             exit()
+
+        elif choice == '5':
+            browser.find_elements(By.CLASS_NAME, 'sc-list-custom-dropdown__option-wrapper')[1].click()
+            
 
         else:
             pass

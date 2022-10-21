@@ -133,8 +133,8 @@ if __name__ == '__main__':
         load_cookie()
     except FileNotFoundError:
         print('Please log in manually on automated web driver.')
-        input('Once that is done press enter on console...')
         browser.get('https://www.mercadolibre.com/jms/mla/lgz/msl/login')
+        input('Once that is done press enter on console...')
         save_cookie()
 
     browser.get('https://www.mercadolibre.com.ar/publicaciones/listado')
@@ -191,8 +191,15 @@ enter the number of choice:""")
             exit()
 
         elif choice == '5':
+            browser.find_element(By.CLASS_NAME, 'sc-list-custom-dropdown__button').click()
             browser.find_elements(By.CLASS_NAME, 'sc-list-custom-dropdown__option-wrapper')[1].click()
-            
-
+            sleep(4)
+            filters = [a for a in browser.find_elements(By.CLASS_NAME, 'sc-ui-hover-button__text') if 'Filtros' in a.text]
+            filters[0].click()
+            sleep(2)
+            browser.execute_script("arguments[0].click();", browser.find_element(By.ID, 'ACTIVE'))
+            browser.find_elements(By.CLASS_NAME, 'andes-button__content')[1].click()
+            sleep(2)
+            browser.find_elements(By.CLASS_NAME, 'sc-bulk-tab__name')
         else:
             pass

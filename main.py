@@ -170,7 +170,7 @@ enter the number of choice:""")
             search_for = input('publi ID or Title: ')
             stock_change = input('Enter Stock change: ')
             change_price = input('should we change the price?(Y/N): ')
-            if change_price == "Y" or change_price == "y":
+            if change_price.lower() == "y":  # or change_price == "y":
                 change_price = True
                 price = input('New price: ')
                 tech = input('edit specs(Y/N): ')
@@ -194,9 +194,10 @@ enter the number of choice:""")
             browser.find_element(By.CLASS_NAME, 'sc-list-custom-dropdown__button').click()
             browser.find_elements(By.CLASS_NAME, 'sc-list-custom-dropdown__option-wrapper')[1].click()
             sleep(4)
-            filters = [a for a in browser.find_elements(By.CLASS_NAME, 'sc-ui-hover-button__text') if 'Filtros' in a.text]
+            filters = [a for a in browser.find_elements(By.CLASS_NAME, 'sc-ui-hover-button__text') if
+                       'Filtros' in a.text]
             filters[0].click()
-            sleep(2)
+            sleep(3)
             browser.execute_script("arguments[0].click();", browser.find_element(By.ID, 'ACTIVE'))
             browser.find_elements(By.CLASS_NAME, 'andes-button__content')[1].click()
             sleep(2)

@@ -1,7 +1,10 @@
 from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, WebDriverException
+from selenium.common.exceptions import TimeoutException
 
 import pickle
 from time import sleep
@@ -37,18 +40,20 @@ def find_publication(search):
 def edit_price(updated_price):
     price_view = browser.find_elements(By.CLASS_NAME, 'sell-ui-card-header-icon')[1]
     price_view.click()
-    sleep(2)
-    edits = browser.find_elements(By.CLASS_NAME, 'andes-form-control__control')
+    edits = WebDriverWait(browser, 2).until(
+        EC.presence_of_all_elements_located((By.CLASS_NAME, 'andes-form-control__control')))
+    # edits = browser.find_elements(By.CLASS_NAME, 'andes-form-control__control')
     price_to_edit = edits[3].find_element(By.CLASS_NAME, 'andes-form-control__field')
     price_to_edit.send_keys(Keys.BACKSPACE * 6 + updated_price)
     confirm = browser.find_elements(By.CLASS_NAME, 'andes-button__content')[2]
     confirm.click()
-    sleep(2)
     try:
-        popup = browser.find_element(By.CLASS_NAME, 'andes-modal-dialog__wrapper')
+        popup = WebDriverWait(browser, 2).until(
+            EC.presence_of_element_located((By.CLASS_NAME, 'andes-modal-dialog__wrapper')))
+        # popup = browser.find_element(By.CLASS_NAME, 'andes-modal-dialog__wrapper')
         popup.find_elements(By.CLASS_NAME, 'andes-button__content')[0].click()
-    except NoSuchElementException:
-        sleep(1)
+    except TimeoutException:
+        pass
     sleep(4)
 
 
@@ -61,9 +66,11 @@ def edit_tech():
         if 'string' in i.get_attribute('class'):
             print('string')
             i.find_element(By.CLASS_NAME, 'andes-form-control__field').send_keys('No disponible')
+            sleep(.1)
         elif 'number' in i.get_attribute('class'):
             print('number')
             i.find_element(By.CLASS_NAME, 'andes-form-control__field').send_keys('0')
+            sleep(.1)
         elif 'multivalue' in i.get_attribute('class'):
             print('multivalue')
             i.find_element(By.CLASS_NAME, 'andes-form-control__field').send_keys('No disponible' + Keys.ENTER)
@@ -72,12 +79,14 @@ def edit_tech():
         elif 'boolean' in i.get_attribute('class'):
             print('bool')
             i.find_elements(By.CLASS_NAME, 'sell-ui-switch__option')[1].click()
+            sleep(.1)
         elif 'list' in i.get_attribute('class'):
             print('list')
             i.click()
             i.find_elements(By.CLASS_NAME, 'andes-list__item-text')[3].click()
+            sleep(.1)
         else:
-            print('Error, input type new o unrecognized')
+            print('Error, input type new or unrecognized')
         sleep(.2)
 
     try:
@@ -88,17 +97,18 @@ def edit_tech():
 
 
 def change_stock(delta):
-    stock = browser.find_element(By.ID, 'quantity')
+    stock = WebDriverWait(browser, 4).until(EC.presence_of_element_located((By.ID, 'quantity')))
     new_stock = int(stock.get_attribute('value')) + int(delta)
     stock.send_keys(Keys.BACKSPACE * 5 + str(new_stock))
     browser.find_elements(By.CLASS_NAME, 'andes-button__content')[0].click()
-    sleep(3)
 
 
-def handle_stock():
-    first_result = browser.find_elements(By.CLASS_NAME, 'sc-list-item-row sc-list-item-row--active')[0]
+def handle_stock(delta):
+    first_result = browser.find_elements(By.CLASS_NAME, 'sc-list-item-row')[0]
     stock = first_result.find_element(By.CLASS_NAME, 'sc-list-item-row-description__info')
-    # Work in Progress
+    state = first_result.find_elements(By.CLASS_NAME, 'sc-list-actionable-cell__title--text')[-1]
+    if stock.text == '1 unidad' and delta == -1 and state.text == 'activa':
+        pass  # pause
 
 
 def open_driver():
@@ -114,14 +124,15 @@ def open_driver():
 
 def clear_filters():
     try:
-        filter_button = browser.find_element(By.CLASS_NAME, 'sc-tags-container__title__text')
+        filter_button = WebDriverWait(browser, 2).until(
+            EC.presence_of_element_located((By.CLASS_NAME, 'sc-tags-container__title__text')))
         filter_button.click()
         clear_all = [a for a in browser.find_elements(By.CLASS_NAME, 'andes-button__content') if
                      a.text == 'Limpiar filtros']
         clear_all[0].click()
-    except IndexError:
-        filters = browser.find_elements(By.CLASS_NAME, 'andes-tag__close-icon')
-        for i in reversed(filters):
+    except TimeoutException:
+        active_filters = browser.find_elements(By.CLASS_NAME, 'andes-tag__close-icon')
+        for i in reversed(active_filters):
             i.click()
             sleep(1.5)
 
@@ -138,7 +149,6 @@ if __name__ == '__main__':
         save_cookie()
 
     browser.get('https://www.mercadolibre.com.ar/publicaciones/listado')
-    sleep(1)
     clear_filters()
     print('Welcome to AutoMeli with Selenium!')
     while True:
@@ -158,7 +168,7 @@ enter the number of choice:""")
             tech = input('edit specs(Y/N)')
             find_publication(search_for)
             edit_price(price)
-            if tech == "Y" or tech == "y":
+            if tech.lower() == "y":
                 edit_tech()
             browser.back()
         elif choice == '2':
@@ -170,7 +180,7 @@ enter the number of choice:""")
             search_for = input('publi ID or Title: ')
             stock_change = input('Enter Stock change: ')
             change_price = input('should we change the price?(Y/N): ')
-            if change_price.lower() == "y":  # or change_price == "y":
+            if change_price.lower() == "y":
                 change_price = True
                 price = input('New price: ')
                 tech = input('edit specs(Y/N): ')
@@ -183,7 +193,7 @@ enter the number of choice:""")
                 tech = input('edit specs(Y/N): ')
                 find_publication(search_for)
                 change_stock(stock_change)
-                if tech == "Y" or tech == "y":
+                if tech.lower() == "y":
                     edit_tech()
             browser.back()
         elif choice == '0':

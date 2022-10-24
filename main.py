@@ -66,28 +66,28 @@ def edit_tech():
         if 'string' in i.get_attribute('class'):
             print('string')
             i.find_element(By.CLASS_NAME, 'andes-form-control__field').send_keys('No disponible')
-            sleep(.1)
+
         elif 'number' in i.get_attribute('class'):
             print('number')
             i.find_element(By.CLASS_NAME, 'andes-form-control__field').send_keys('0')
-            sleep(.1)
+
         elif 'multivalue' in i.get_attribute('class'):
             print('multivalue')
             i.find_element(By.CLASS_NAME, 'andes-form-control__field').send_keys('No disponible' + Keys.ENTER)
-            sleep(.1)
 
         elif 'boolean' in i.get_attribute('class'):
             print('bool')
             i.find_elements(By.CLASS_NAME, 'sell-ui-switch__option')[1].click()
-            sleep(.1)
+
         elif 'list' in i.get_attribute('class'):
             print('list')
             i.click()
             i.find_elements(By.CLASS_NAME, 'andes-list__item-text')[3].click()
-            sleep(.1)
+
         else:
             print('Error, input type new or unrecognized')
         sleep(.2)
+    sleep(1.5)
 
     try:
         browser.find_elements(By.CLASS_NAME, 'andes-button__content')[2].click()
@@ -101,6 +101,7 @@ def change_stock(delta):
     new_stock = int(stock.get_attribute('value')) + int(delta)
     stock.send_keys(Keys.BACKSPACE * 5 + str(new_stock))
     browser.find_elements(By.CLASS_NAME, 'andes-button__content')[0].click()
+    sleep(4)
 
 
 def handle_stock(delta):

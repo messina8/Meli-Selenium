@@ -99,6 +99,7 @@ def edit_tech():
 def change_stock(delta):
     stock = WebDriverWait(browser, 4).until(EC.presence_of_element_located((By.ID, 'quantity')))
     new_stock = int(stock.get_attribute('value')) + int(delta)
+    # noinspection PyTypeChecker
     stock.send_keys(Keys.BACKSPACE * 5 + str(new_stock))
     browser.find_elements(By.CLASS_NAME, 'andes-button__content')[0].click()
     sleep(4)
@@ -165,7 +166,7 @@ enter the number of choice:""")
         choice = input()
         if choice == '5':
             auto_filler(browser)
-        elif choice in range(1, 4):
+        elif choice in ['1', '2', '3']:
             search_for = input('publi ID or Title: ')
             try:
                 find_publication(search_for)

@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, WebDriverException
 from selenium.common.exceptions import TimeoutException
-
+from autofiller import auto_filler
 import pickle
 from time import sleep
 
@@ -34,7 +34,7 @@ def find_publication(search):
     sleep(2.5)
     edit_price_button = browser.find_element(By.CLASS_NAME, 'sc-list-item-row-description__title')
     edit_price_button.click()
-    sleep(2.5)
+    sleep(1)
 
 
 def edit_price(updated_price):
@@ -163,55 +163,49 @@ Your options are:
 
 enter the number of choice:""")
         choice = input()
-        if choice == '1':
+        if choice == '5':
+            auto_filler(browser)
+        elif choice in range(1, 4):
             search_for = input('publi ID or Title: ')
+            try:
+                find_publication(search_for)
+            except NoSuchElementException:
+                choice = 9
+                print('No results found')
+        if choice == '1':
             price = input('New price: ')
             tech = input('edit specs(Y/N)')
-            find_publication(search_for)
+            # find_publication(search_for)
             edit_price(price)
             if tech.lower() == "y":
                 edit_tech()
             browser.back()
         elif choice == '2':
-            search_for = input('publi ID or Title: ')
-            find_publication(search_for)
+            # find_publication(search_for)
             edit_tech()
             browser.back()
         elif choice == '3':
-            search_for = input('publi ID or Title: ')
             stock_change = input('Enter Stock change: ')
             change_price = input('should we change the price?(Y/N): ')
             if change_price.lower() == "y":
                 change_price = True
                 price = input('New price: ')
                 tech = input('edit specs(Y/N): ')
-                find_publication(search_for)
+                # find_publication(search_for)
                 change_stock(stock_change)
                 edit_price(price)
                 if tech == "Y" or tech == "y":
                     edit_tech()
             else:
                 tech = input('edit specs(Y/N): ')
-                find_publication(search_for)
+                # find_publication(search_for)
                 change_stock(stock_change)
                 if tech.lower() == "y":
                     edit_tech()
             browser.back()
         elif choice == '0':
             browser.close()
-            exit()
+            exit(0)
 
-        elif choice == '5':
-            browser.find_element(By.CLASS_NAME, 'sc-list-custom-dropdown__button').click()
-            browser.find_elements(By.CLASS_NAME, 'sc-list-custom-dropdown__option-wrapper')[1].click()
-            sleep(4)
-            filters = [a for a in browser.find_elements(By.CLASS_NAME, 'sc-ui-hover-button__text') if
-                       'Filtros' in a.text]
-            filters[0].click()
-            sleep(3)
-            browser.execute_script("arguments[0].click();", browser.find_element(By.ID, 'ACTIVE'))
-            browser.find_elements(By.CLASS_NAME, 'andes-button__content')[1].click()
-            sleep(2)
-            browser.find_elements(By.CLASS_NAME, 'sc-bulk-tab__name')
         else:
             pass

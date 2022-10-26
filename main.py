@@ -128,7 +128,7 @@ def handle_stock(delta):
 
     if stock.text == 'Sin Stock' or state.text.lower() == 'inactiva':
         first_result.find_element(By.CLASS_NAME, 'sc-trigger-content__trigger').click()
-        sleep(.8)
+        sleep(1.2)
         [a for a in first_result.find_elements(By.CLASS_NAME, 'andes-list__item') if
          a.text.lower() in ['reactivar', 'republicar']][0].click()
         if 'modificar' in browser.current_url:
@@ -146,7 +146,7 @@ def handle_stock(delta):
             sleep(1.8)
             browser.back()
             browser.back()
-            open_publication()
+            # open_publication()
 
     elif stock_to_int(stock.text) + int(delta) == 0:
         try:
@@ -163,6 +163,8 @@ def handle_stock(delta):
             [a for a in first_result.find_elements(By.CLASS_NAME, 'andes-list__item') if
              a.text.lower() == 'modificar'][0].click()
             change_stock(0, absolute=True)
+    else:
+        change_stock(delta)
 
 
 def open_driver():

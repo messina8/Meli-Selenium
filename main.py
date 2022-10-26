@@ -91,8 +91,8 @@ def edit_tech():
 
         else:
             print('Error, input type new or unrecognized')
-        sleep(.2)
-    sleep(.5)
+        sleep(.4)
+    sleep(.4)
 
     try:
         browser.find_elements(By.CLASS_NAME, 'andes-button__content')[2].click()
@@ -128,7 +128,7 @@ def handle_stock(delta):
 
     if stock.text == 'Sin Stock' or state.text.lower() == 'inactiva':
         first_result.find_element(By.CLASS_NAME, 'sc-trigger-content__trigger').click()
-        sleep(.5)
+        sleep(.8)
         [a for a in first_result.find_elements(By.CLASS_NAME, 'andes-list__item') if
          a.text.lower() in ['reactivar', 'republicar']][0].click()
         if 'modificar' in browser.current_url:
@@ -139,9 +139,14 @@ def handle_stock(delta):
         else:
             cant = browser.find_element(By.CLASS_NAME, 'syi-quantity__field')
             cant.send_keys(Keys.BACKSPACE * 2 + str(delta))
-            browser.find_elements(By.CLASS_NAME, 'syi-listing-type')[1].click()
             sleep(.8)
+            browser.find_elements(By.CLASS_NAME, 'syi-listing-type')[1].click()
+            sleep(.3)
             browser.find_element(By.CLASS_NAME, 'syi-action-button__primary').click()
+            sleep(1.8)
+            browser.back()
+            browser.back()
+            open_publication()
 
     elif stock_to_int(stock.text) + int(delta) == 0:
         try:

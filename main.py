@@ -3,8 +3,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, WebDriverException
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, WebDriverException, \
+    TimeoutException, NoSuchWindowException
 from autofiller import auto_filler
 import pickle
 from time import sleep
@@ -264,5 +264,5 @@ enter the number of choice:""")
             else:
                 pass
 
-        except:
+        except NoSuchWindowException:
             browser.get(browser.current_url)

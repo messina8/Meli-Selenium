@@ -16,8 +16,8 @@ def save_cookie():
 
 
 def load_cookie():
-    with open("cookie", 'rb') as cookiesfile:
-        cookies = pickle.load(cookiesfile)
+    with open("cookie", 'rb') as cookies_file:
+        cookies = pickle.load(cookies_file)
         for cookie in cookies:
             # print(cookie)
             browser.add_cookie(cookie)

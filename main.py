@@ -104,10 +104,10 @@ def edit_tech():
 def change_stock(delta, absolute=False):
     stock = WebDriverWait(browser, 4).until(EC.presence_of_element_located((By.ID, 'quantity')))
     new_stock = int(stock.get_attribute('value')) + int(delta)
-    # noinspection PyTypeChecker
     if absolute:
         stock.send_keys(Keys.BACKSPACE * 5 + delta)
     else:
+        # noinspection PyTypeChecker
         stock.send_keys(Keys.BACKSPACE * 5 + str(new_stock))
     browser.find_elements(By.CLASS_NAME, 'andes-button__content')[0].click()
     sleep(4)
@@ -138,6 +138,7 @@ def handle_stock(delta):
             change_stock(delta, absolute=True)
         else:
             cant = browser.find_element(By.CLASS_NAME, 'syi-quantity__field')
+            # noinspection PyTypeChecker
             cant.send_keys(Keys.BACKSPACE * 2 + str(delta))
             browser.find_elements(By.CLASS_NAME, 'syi-listing-type')[1].click()
             sleep(.8)

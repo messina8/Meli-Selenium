@@ -121,7 +121,7 @@ def stock_to_int(string):
     return int(num)
 
 
-def handle_stock(delta):
+def handle_stock(delta, price=''):
     first_result = browser.find_elements(By.CLASS_NAME, 'sc-list-item-row')[0]
     stock = first_result.find_element(By.CLASS_NAME, 'sc-list-item-row-description__info')
     state = first_result.find_elements(By.CLASS_NAME, 'sc-list-actionable-cell__title--text')[-1]
@@ -142,11 +142,10 @@ def handle_stock(delta):
             sleep(.8)
             browser.find_elements(By.CLASS_NAME, 'syi-listing-type')[1].click()
             sleep(.3)
+            # add price if price not ''
             browser.find_element(By.CLASS_NAME, 'syi-action-button__primary').click()
             sleep(1.8)
-            browser.back()
-            browser.back()
-            # open_publication()
+            #
 
     elif stock_to_int(stock.text) + int(delta) == 0:
         try:
@@ -218,49 +217,52 @@ Your options are:
 
 enter the number of choice:""")
         choice = input()
-        if choice == '5':
-            auto_filler(browser)
-        elif choice in ['1', '2', '3']:
-            search_for = input('publi ID or Title: ')
-            try:
-                find_publication(search_for)
-            except NoSuchElementException:
-                choice = 9
-                print('No results found')
-        if choice == '1':
-            price = input('New price: ')
-            tech = input('edit specs(Y/N)')
-            open_publication()
-            edit_price(price)
-            if tech.lower() == "y":
-                edit_tech()
-            browser.back()
-        elif choice == '2':
-            open_publication()
-            edit_tech()
-            browser.back()
-        elif choice == '3':
-            stock_change = input('Enter Stock change: ')
-            change_price = input('should we change the price?(Y/N): ')
-            if change_price.lower() == "y":
-                change_price = True
+        try:
+            if choice == '5':
+                auto_filler(browser)
+            elif choice in ['1', '2', '3']:
+                search_for = input('publi ID or Title: ')
+                try:
+                    find_publication(search_for)
+                except NoSuchElementException:
+                    choice = 9
+                    print('No results found')
+            if choice == '1':
                 price = input('New price: ')
-                tech = input('edit specs(Y/N): ')
-                # change_stock(stock_change)
-                handle_stock(stock_change)
+                tech = input('edit specs(Y/N)')
+                open_publication()
                 edit_price(price)
-                if tech == "Y" or tech == "y":
-                    edit_tech()
-            else:
-                tech = input('edit specs(Y/N): ')
-                handle_stock(stock_change)
-                # change_stock(stock_change)
                 if tech.lower() == "y":
                     edit_tech()
-            browser.back()
-        elif choice == '0':
-            browser.close()
-            exit(0)
+                browser.back()
+            elif choice == '2':
+                open_publication()
+                edit_tech()
+                browser.back()
+            elif choice == '3':
+                stock_change = input('Enter Stock change: ')
+                change_price = input('should we change the price?(Y/N): ')
+                if change_price.lower() == "y":
+                    price = input('New price: ')
+                    tech = input('edit specs(Y/N): ')
+                    # change_stock(stock_change)
+                    handle_stock(stock_change, price=price)
+                    # edit_price(price)
+                    if tech == "Y" or tech == "y":
+                        edit_tech()
+                else:
+                    tech = input('edit specs(Y/N): ')
+                    handle_stock(stock_change)
+                    # change_stock(stock_change)
+                    if tech.lower() == "y":
+                        edit_tech()
+                browser.back()
+            elif choice == '0':
+                browser.close()
+                exit(0)
 
-        else:
-            pass
+            else:
+                pass
+
+        except:
+            browser.get(browser.current_url)

@@ -32,13 +32,18 @@ def find_publication(search):
     search_button.click()
     print(f'searching for {search_for}')
     sleep(2.5)
-    edit_price_button = browser.find_element(By.CLASS_NAME, 'sc-list-item-row-description__title')
+
+
+def open_publication():
+    first_result = browser.find_elements(By.CLASS_NAME, 'sc-list-item-row')[0]
+    edit_price_button = first_result.find_element(By.CLASS_NAME, 'sc-list-item-row-description__title')
     edit_price_button.click()
     sleep(1)
 
 
 def edit_price(updated_price):
     price_view = browser.find_elements(By.CLASS_NAME, 'sell-ui-card-header-icon')[1]
+    sleep(.2)
     price_view.click()
     edits = WebDriverWait(browser, 2).until(
         EC.presence_of_all_elements_located((By.CLASS_NAME, 'andes-form-control__control')))
@@ -87,7 +92,7 @@ def edit_tech():
         else:
             print('Error, input type new or unrecognized')
         sleep(.2)
-    sleep(1.5)
+    sleep(.5)
 
     try:
         browser.find_elements(By.CLASS_NAME, 'andes-button__content')[2].click()
@@ -96,21 +101,63 @@ def edit_tech():
         pass
 
 
-def change_stock(delta):
+def change_stock(delta, absolute=False):
     stock = WebDriverWait(browser, 4).until(EC.presence_of_element_located((By.ID, 'quantity')))
     new_stock = int(stock.get_attribute('value')) + int(delta)
     # noinspection PyTypeChecker
-    stock.send_keys(Keys.BACKSPACE * 5 + str(new_stock))
+    if absolute:
+        stock.send_keys(Keys.BACKSPACE * 5 + delta)
+    else:
+        stock.send_keys(Keys.BACKSPACE * 5 + str(new_stock))
     browser.find_elements(By.CLASS_NAME, 'andes-button__content')[0].click()
     sleep(4)
+
+
+def stock_to_int(string):
+    num = ''
+    for c in string:
+        if c.isdigit():
+            num += c
+    return int(num)
 
 
 def handle_stock(delta):
     first_result = browser.find_elements(By.CLASS_NAME, 'sc-list-item-row')[0]
     stock = first_result.find_element(By.CLASS_NAME, 'sc-list-item-row-description__info')
     state = first_result.find_elements(By.CLASS_NAME, 'sc-list-actionable-cell__title--text')[-1]
-    if stock.text == '1 unidad' and delta == -1 and state.text == 'activa':
-        pass  # pause
+
+    if stock.text == 'Sin Stock' or state.text.lower() == 'inactiva':
+        first_result.find_element(By.CLASS_NAME, 'sc-trigger-content__trigger').click()
+        sleep(.5)
+        [a for a in first_result.find_elements(By.CLASS_NAME, 'andes-list__item') if
+         a.text.lower() in ['reactivar', 'republicar']][0].click()
+        if 'modificar' in browser.current_url:
+            change_stock(delta)
+        elif 'listado' in browser.current_url:
+            open_publication()
+            change_stock(delta, absolute=True)
+        else:
+            cant = browser.find_element(By.CLASS_NAME, 'syi-quantity__field')
+            cant.send_keys(Keys.BACKSPACE * 2 + str(delta))
+            browser.find_elements(By.CLASS_NAME, 'syi-listing-type')[1].click()
+            sleep(.8)
+            browser.find_element(By.CLASS_NAME, 'syi-action-button__primary').click()
+
+    elif stock_to_int(stock.text) + int(delta) == 0:
+        try:
+            first_result.find_element(By.CLASS_NAME, 'sc-trigger-content__trigger').click()
+            sleep(1)
+            [a for a in first_result.find_elements(By.CLASS_NAME, 'andes-list__item') if
+             a.text.lower() == 'pausar'][0].click()
+            sleep(1)
+            [a for a in browser.find_elements(By.CLASS_NAME, 'andes-button__content') if a.text.lower() == 'confirmar'][
+                0].click()
+        except IndexError:
+            first_result.find_element(By.CLASS_NAME, 'sc-trigger-content__trigger').click()
+            sleep(1)
+            [a for a in first_result.find_elements(By.CLASS_NAME, 'andes-list__item') if
+             a.text.lower() == 'modificar'][0].click()
+            change_stock(0, absolute=True)
 
 
 def open_driver():
@@ -176,13 +223,13 @@ enter the number of choice:""")
         if choice == '1':
             price = input('New price: ')
             tech = input('edit specs(Y/N)')
-            # find_publication(search_for)
+            open_publication()
             edit_price(price)
             if tech.lower() == "y":
                 edit_tech()
             browser.back()
         elif choice == '2':
-            # find_publication(search_for)
+            open_publication()
             edit_tech()
             browser.back()
         elif choice == '3':
@@ -192,15 +239,15 @@ enter the number of choice:""")
                 change_price = True
                 price = input('New price: ')
                 tech = input('edit specs(Y/N): ')
-                # find_publication(search_for)
-                change_stock(stock_change)
+                # change_stock(stock_change)
+                handle_stock(stock_change)
                 edit_price(price)
                 if tech == "Y" or tech == "y":
                     edit_tech()
             else:
                 tech = input('edit specs(Y/N): ')
-                # find_publication(search_for)
-                change_stock(stock_change)
+                handle_stock(stock_change)
+                # change_stock(stock_change)
                 if tech.lower() == "y":
                     edit_tech()
             browser.back()

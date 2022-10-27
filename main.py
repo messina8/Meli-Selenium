@@ -3,8 +3,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, WebDriverException
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, WebDriverException, \
+    TimeoutException, NoSuchWindowException
 from autofiller import auto_filler
 import pickle
 from time import sleep
@@ -91,8 +91,8 @@ def edit_tech():
 
         else:
             print('Error, input type new or unrecognized')
-        sleep(.2)
-    sleep(.5)
+        sleep(.4)
+    sleep(.4)
 
     try:
         browser.find_elements(By.CLASS_NAME, 'andes-button__content')[2].click()
@@ -121,14 +121,14 @@ def stock_to_int(string):
     return int(num)
 
 
-def handle_stock(delta):
+def handle_stock(delta, price=''):
     first_result = browser.find_elements(By.CLASS_NAME, 'sc-list-item-row')[0]
     stock = first_result.find_element(By.CLASS_NAME, 'sc-list-item-row-description__info')
     state = first_result.find_elements(By.CLASS_NAME, 'sc-list-actionable-cell__title--text')[-1]
 
     if stock.text == 'Sin Stock' or state.text.lower() == 'inactiva':
         first_result.find_element(By.CLASS_NAME, 'sc-trigger-content__trigger').click()
-        sleep(.5)
+        sleep(1.2)
         [a for a in first_result.find_elements(By.CLASS_NAME, 'andes-list__item') if
          a.text.lower() in ['reactivar', 'republicar']][0].click()
         if 'modificar' in browser.current_url:
@@ -140,9 +140,13 @@ def handle_stock(delta):
             cant = browser.find_element(By.CLASS_NAME, 'syi-quantity__field')
             # noinspection PyTypeChecker
             cant.send_keys(Keys.BACKSPACE * 2 + str(delta))
-            browser.find_elements(By.CLASS_NAME, 'syi-listing-type')[1].click()
             sleep(.8)
+            browser.find_elements(By.CLASS_NAME, 'syi-listing-type')[1].click()
+            sleep(.3)
+            # add price if price not ''
             browser.find_element(By.CLASS_NAME, 'syi-action-button__primary').click()
+            sleep(1.8)
+            #
 
     elif stock_to_int(stock.text) + int(delta) == 0:
         try:
@@ -159,6 +163,8 @@ def handle_stock(delta):
             [a for a in first_result.find_elements(By.CLASS_NAME, 'andes-list__item') if
              a.text.lower() == 'modificar'][0].click()
             change_stock(0, absolute=True)
+    else:
+        change_stock(delta)
 
 
 def open_driver():
@@ -212,49 +218,52 @@ Your options are:
 
 enter the number of choice:""")
         choice = input()
-        if choice == '5':
-            auto_filler(browser)
-        elif choice in ['1', '2', '3']:
-            search_for = input('publi ID or Title: ')
-            try:
-                find_publication(search_for)
-            except NoSuchElementException:
-                choice = 9
-                print('No results found')
-        if choice == '1':
-            price = input('New price: ')
-            tech = input('edit specs(Y/N)')
-            open_publication()
-            edit_price(price)
-            if tech.lower() == "y":
-                edit_tech()
-            browser.back()
-        elif choice == '2':
-            open_publication()
-            edit_tech()
-            browser.back()
-        elif choice == '3':
-            stock_change = input('Enter Stock change: ')
-            change_price = input('should we change the price?(Y/N): ')
-            if change_price.lower() == "y":
-                change_price = True
+        try:
+            if choice == '5':
+                auto_filler(browser)
+            elif choice in ['1', '2', '3']:
+                search_for = input('publi ID or Title: ')
+                try:
+                    find_publication(search_for)
+                except NoSuchElementException:
+                    choice = 9
+                    print('No results found')
+            if choice == '1':
                 price = input('New price: ')
-                tech = input('edit specs(Y/N): ')
-                # change_stock(stock_change)
-                handle_stock(stock_change)
+                tech = input('edit specs(Y/N)')
+                open_publication()
                 edit_price(price)
-                if tech == "Y" or tech == "y":
-                    edit_tech()
-            else:
-                tech = input('edit specs(Y/N): ')
-                handle_stock(stock_change)
-                # change_stock(stock_change)
                 if tech.lower() == "y":
                     edit_tech()
-            browser.back()
-        elif choice == '0':
-            browser.close()
-            exit(0)
+                browser.back()
+            elif choice == '2':
+                open_publication()
+                edit_tech()
+                browser.back()
+            elif choice == '3':
+                stock_change = input('Enter Stock change: ')
+                change_price = input('should we change the price?(Y/N): ')
+                if change_price.lower() == "y":
+                    price = input('New price: ')
+                    tech = input('edit specs(Y/N): ')
+                    # change_stock(stock_change)
+                    handle_stock(stock_change, price=price)
+                    # edit_price(price)
+                    if tech == "Y" or tech == "y":
+                        edit_tech()
+                else:
+                    tech = input('edit specs(Y/N): ')
+                    handle_stock(stock_change)
+                    # change_stock(stock_change)
+                    if tech.lower() == "y":
+                        edit_tech()
+                browser.back()
+            elif choice == '0':
+                browser.close()
+                exit(0)
 
-        else:
-            pass
+            else:
+                pass
+
+        except NoSuchWindowException:
+            browser.get(browser.current_url)

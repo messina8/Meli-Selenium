@@ -16,7 +16,7 @@ def save_cookie():
 
 
 def load_cookie():
-    with open("cookie", 'rb') as cookies_file:
+    with open("cookie2", 'rb') as cookies_file:
         cookies = pickle.load(cookies_file)
         for cookie in cookies:
             # print(cookie)
@@ -31,8 +31,8 @@ def find_publication(search):
     search_bar.send_keys(Keys.BACKSPACE * 35 + search)
     search_button.click()
     print(f'searching for {search_for}')
-    sleep(2.5)
-    print(len(browser.find_elements(By.CLASS_NAME, 'sc-list-item-row')))
+    sleep(3)
+    print(f'{len(browser.find_elements(By.CLASS_NAME, "sc-list-item-row"))} results')
 
 
 def open_publication():
@@ -43,7 +43,7 @@ def open_publication():
 
 
 def edit_price(updated_price):
-    price_view = browser.find_elements(By.CLASS_NAME, 'sell-ui-card-header-icon')[1]
+    price_view = browser.find_element(By.ID, 'prices_header_container')
     sleep(.2)
     price_view.click()
     edits = WebDriverWait(browser, 2).until(
@@ -129,14 +129,24 @@ def handle_stock(delta, new_price=''):
 
     if stock.text == 'Sin Stock' or state.text.lower() == 'inactiva':
         first_result.find_element(By.CLASS_NAME, 'sc-trigger-content__trigger').click()
-        sleep(1.2)
+        sleep(1)
         [a for a in first_result.find_elements(By.CLASS_NAME, 'andes-list__item') if
          a.text.lower() in ['reactivar', 'republicar']][0].click()
+        sleep(1.5)
         if 'modificar' in browser.current_url:
             change_stock(delta)
+            sleep(1)
         elif 'listado' in browser.current_url:
             open_publication()
             change_stock(delta, absolute=True)
+            popup = True
+            while popup:
+                try:
+                    browser.find_element(By.CLASS_NAME, 'sell-ui-snackbar__message')
+                except NoSuchElementException:
+                    popup = False
+            if new_price != '':
+                edit_price(new_price)
         else:
             cant = browser.find_element(By.ID, 'relist-0.item.available_quantity')
             # noinspection PyTypeChecker
@@ -152,7 +162,7 @@ def handle_stock(delta, new_price=''):
             browser.find_element(By.CLASS_NAME, 'syi-action-button__primary').click()
             sleep(1.8)
 
-    elif stock_to_int(stock.text) + int(delta) == 0:
+    elif stock_to_int(stock.text) + int(delta) <= 0:
         try:
             first_result.find_element(By.CLASS_NAME, 'sc-trigger-content__trigger').click()
             sleep(1)

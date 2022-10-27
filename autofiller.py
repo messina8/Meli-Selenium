@@ -20,7 +20,7 @@ def auto_filler(browser):
     lineas = browser.find_elements(By.CLASS_NAME, 'fixedDataTableRowLayout_main')
     cuadrados = lineas[2].find_elements(By.CLASS_NAME, 'sc-bulk-cell__text')[13:]
     cuadrados2 = lineas[2].find_elements(By.CLASS_NAME, 'sc-bulk-cell')[17:48]
-    combi = list(zip(cuadrados2, cuadrados))
+    # combi = list(zip(cuadrados2, cuadrados))
     for h, i in enumerate(cuadrados2[1:]):
         print(h)
         text = cuadrados[h + 1]

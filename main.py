@@ -32,6 +32,7 @@ def find_publication(search):
     search_button.click()
     print(f'searching for {search_for}')
     sleep(2.5)
+    print(len(browser.find_elements(By.CLASS_NAME, 'sc-list-item-row')))
 
 
 def open_publication():
@@ -63,7 +64,7 @@ def edit_price(updated_price):
 
 
 def edit_tech():
-    tech_view = browser.find_elements(By.CLASS_NAME, 'sell-ui-card-header-icon')[3]
+    tech_view = browser.find_element(By.ID, 'technical_specifications_header_container')
     tech_view.click()
     input_list = browser.find_elements(By.CLASS_NAME, 'modify-ui-attribute-template-with-hint')
     pending_items = [a for a in input_list if 'Completá' in a.text]
@@ -121,7 +122,7 @@ def stock_to_int(string):
     return int(num)
 
 
-def handle_stock(delta, price=''):
+def handle_stock(delta, new_price=''):
     first_result = browser.find_elements(By.CLASS_NAME, 'sc-list-item-row')[0]
     stock = first_result.find_element(By.CLASS_NAME, 'sc-list-item-row-description__info')
     state = first_result.find_elements(By.CLASS_NAME, 'sc-list-actionable-cell__title--text')[-1]
@@ -137,16 +138,19 @@ def handle_stock(delta, price=''):
             open_publication()
             change_stock(delta, absolute=True)
         else:
-            cant = browser.find_element(By.CLASS_NAME, 'syi-quantity__field')
+            cant = browser.find_element(By.ID, 'relist-0.item.available_quantity')
             # noinspection PyTypeChecker
             cant.send_keys(Keys.BACKSPACE * 2 + str(delta))
+            price_in = browser.find_element(By.ID, 'relist-0.item.price')
+            if new_price != '':
+                # noinspection PyTypeChecker
+                price_in.send_keys(Keys.BACKSPACE*6 + new_price)
             sleep(.8)
             browser.find_elements(By.CLASS_NAME, 'syi-listing-type')[1].click()
             sleep(.3)
-            # add price if price not ''
+
             browser.find_element(By.CLASS_NAME, 'syi-action-button__primary').click()
             sleep(1.8)
-            #
 
     elif stock_to_int(stock.text) + int(delta) == 0:
         try:
@@ -225,7 +229,7 @@ enter the number of choice:""")
                 search_for = input('publi ID or Title: ')
                 try:
                     find_publication(search_for)
-                except NoSuchElementException:
+                except NoSuchElementException or IndexError:
                     choice = 9
                     print('No results found')
             if choice == '1':
@@ -246,15 +250,12 @@ enter the number of choice:""")
                 if change_price.lower() == "y":
                     price = input('New price: ')
                     tech = input('edit specs(Y/N): ')
-                    # change_stock(stock_change)
-                    handle_stock(stock_change, price=price)
-                    # edit_price(price)
+                    handle_stock(stock_change, new_price=price)
                     if tech == "Y" or tech == "y":
                         edit_tech()
                 else:
                     tech = input('edit specs(Y/N): ')
                     handle_stock(stock_change)
-                    # change_stock(stock_change)
                     if tech.lower() == "y":
                         edit_tech()
                 browser.back()
@@ -266,4 +267,7 @@ enter the number of choice:""")
                 pass
 
         except NoSuchWindowException:
-            browser.get(browser.current_url)
+            # should detect if browser is still open, in case it got closed.
+            window_name = browser.window_handles[0]
+            browser.switch_to.window(window_name)
+            print('Reference to window was lost and recovered')

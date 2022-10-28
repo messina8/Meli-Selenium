@@ -67,7 +67,7 @@ def edit_tech():
     tech_view = browser.find_element(By.ID, 'technical_specifications_header_container')
     tech_view.click()
     input_list = browser.find_elements(By.CLASS_NAME, 'modify-ui-attribute-template-with-hint')
-    pending_items = [a for a in input_list if 'Completá' in a.text]
+    # pending_items = [a for a in input_list if 'Completá' in a.text]
     for i in input_list:
         if 'string' in i.get_attribute('class'):
             print('string')
@@ -75,13 +75,13 @@ def edit_tech():
             v = i.find_element(By.CLASS_NAME, 'andes-form-control__field')
             if v.get_attribute('value') == '':
                 v.send_keys('No disponible')
-
+                sleep(.5)
         elif 'number' in i.get_attribute('class'):
             print('number')
             v = i.find_element(By.CLASS_NAME, 'andes-form-control__field')
             if v.get_attribute('value') == '':
                 v.send_keys('0')
-
+                sleep(.5)
         elif 'multivalue' in i.get_attribute('class'):
             print('multivalue')
             v = i.find_element(By.CLASS_NAME, 'andes-form-control__field')
@@ -91,12 +91,17 @@ def edit_tech():
                 v = i.find_elements(By.CLASS_NAME, 'andes-tag')
                 if len(v) == 0:
                     i.find_element(By.CLASS_NAME, 'andes-form-control__field').send_keys('No disponible' + Keys.ENTER)
+                    sleep(.5)
                 else:
                     pass
 
-        elif 'boolean' in i.get_attribute('class') and 'Completá' in i.text:
+        elif 'boolean' in i.get_attribute('class'):
             print('bool')
-            i.find_elements(By.CLASS_NAME, 'sell-ui-switch__option')[1].click()
+            checked = [a for a in i.find_elements(By.CLASS_NAME, 'sell-ui-switch__input') if
+                       a.get_attribute('checked')]
+            if len(checked) == 0:
+                i.find_elements(By.CLASS_NAME, 'sell-ui-switch__option')[1].click()
+                sleep(.5)
 
         elif 'list' in i.get_attribute('class'):
             print('list')
@@ -104,11 +109,9 @@ def edit_tech():
             if 'elegir' in v.get_attribute('aria-label').lower():
                 i.click()
                 i.find_elements(By.CLASS_NAME, 'andes-list__item-text')[3].click()
-
+                sleep(.5)
         else:
             print('Error, input type new or unrecognized')
-        sleep(.4)
-    sleep(.4)
 
     try:
         browser.find_elements(By.CLASS_NAME, 'andes-button__content')[2].click()
@@ -147,7 +150,7 @@ def handle_stock(delta, new_price=''):
         sleep(1)
         [a for a in first_result.find_elements(By.CLASS_NAME, 'andes-list__item') if
          a.text.lower() in ['reactivar', 'republicar']][0].click()
-        sleep(1.5)
+        sleep(2)
         if 'modificar' in browser.current_url:
             change_stock(delta)
             sleep(1)

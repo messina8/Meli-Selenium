@@ -75,13 +75,13 @@ def edit_tech():
             v = i.find_element(By.CLASS_NAME, 'andes-form-control__field')
             if v.get_attribute('value') == '':
                 v.send_keys('No disponible')
-                sleep(.5)
+                sleep(.3)
         elif 'number' in i.get_attribute('class'):
             print('number')
             v = i.find_element(By.CLASS_NAME, 'andes-form-control__field')
             if v.get_attribute('value') == '':
                 v.send_keys('0')
-                sleep(.5)
+                sleep(.3)
         elif 'multivalue' in i.get_attribute('class'):
             print('multivalue')
             v = i.find_element(By.CLASS_NAME, 'andes-form-control__field')
@@ -91,7 +91,7 @@ def edit_tech():
                 v = i.find_elements(By.CLASS_NAME, 'andes-tag')
                 if len(v) == 0:
                     i.find_element(By.CLASS_NAME, 'andes-form-control__field').send_keys('No disponible' + Keys.ENTER)
-                    sleep(.5)
+                    sleep(.3)
                 else:
                     pass
 
@@ -101,7 +101,7 @@ def edit_tech():
                        a.get_attribute('checked')]
             if len(checked) == 0:
                 i.find_elements(By.CLASS_NAME, 'sell-ui-switch__option')[1].click()
-                sleep(.5)
+                sleep(.3)
 
         elif 'list' in i.get_attribute('class'):
             print('list')
@@ -109,7 +109,7 @@ def edit_tech():
             if 'elegir' in v.get_attribute('aria-label').lower():
                 i.click()
                 i.find_elements(By.CLASS_NAME, 'andes-list__item-text')[3].click()
-                sleep(.5)
+                sleep(.3)
         else:
             print('Error, input type new or unrecognized')
 
@@ -147,7 +147,7 @@ def handle_stock(delta, new_price=''):
 
     if stock.text == 'Sin Stock' or state.text.lower() == 'inactiva':
         first_result.find_element(By.CLASS_NAME, 'sc-trigger-content__trigger').click()
-        sleep(1)
+        sleep(1.2)
         [a for a in first_result.find_elements(By.CLASS_NAME, 'andes-list__item') if
          a.text.lower() in ['reactivar', 'republicar']][0].click()
         sleep(2)
@@ -196,6 +196,7 @@ def handle_stock(delta, new_price=''):
              a.text.lower() == 'modificar'][0].click()
             change_stock(0, absolute=True)
     else:
+        open_publication()
         change_stock(delta)
 
 

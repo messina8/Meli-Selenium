@@ -16,7 +16,7 @@ def save_cookie():
 
 
 def load_cookie():
-    with open("cookie2", 'rb') as cookies_file:
+    with open("cookie", 'rb') as cookies_file:
         cookies = pickle.load(cookies_file)
         for cookie in cookies:
             # print(cookie)
@@ -68,27 +68,42 @@ def edit_tech():
     tech_view.click()
     input_list = browser.find_elements(By.CLASS_NAME, 'modify-ui-attribute-template-with-hint')
     pending_items = [a for a in input_list if 'Completá' in a.text]
-    for i in pending_items:
+    for i in input_list:
         if 'string' in i.get_attribute('class'):
             print('string')
-            i.find_element(By.CLASS_NAME, 'andes-form-control__field').send_keys('No disponible')
+            # i.find_element(By.CLASS_NAME, 'andes-form-control__field').send_keys('No disponible')
+            v = i.find_element(By.CLASS_NAME, 'andes-form-control__field')
+            if v.get_attribute('value') == '':
+                v.send_keys('No disponible')
 
         elif 'number' in i.get_attribute('class'):
             print('number')
-            i.find_element(By.CLASS_NAME, 'andes-form-control__field').send_keys('0')
+            v = i.find_element(By.CLASS_NAME, 'andes-form-control__field')
+            if v.get_attribute('value') == '':
+                v.send_keys('0')
 
         elif 'multivalue' in i.get_attribute('class'):
             print('multivalue')
-            i.find_element(By.CLASS_NAME, 'andes-form-control__field').send_keys('No disponible' + Keys.ENTER)
+            v = i.find_element(By.CLASS_NAME, 'andes-form-control__field')
+            if v.get_attribute('value').lower() == 'no aplica':
+                pass
+            else:
+                v = i.find_elements(By.CLASS_NAME, 'andes-tag')
+                if len(v) == 0:
+                    i.find_element(By.CLASS_NAME, 'andes-form-control__field').send_keys('No disponible' + Keys.ENTER)
+                else:
+                    pass
 
-        elif 'boolean' in i.get_attribute('class'):
+        elif 'boolean' in i.get_attribute('class') and 'Completá' in i.text:
             print('bool')
             i.find_elements(By.CLASS_NAME, 'sell-ui-switch__option')[1].click()
 
         elif 'list' in i.get_attribute('class'):
             print('list')
-            i.click()
-            i.find_elements(By.CLASS_NAME, 'andes-list__item-text')[3].click()
+            v = i.find_element(By.CLASS_NAME, 'andes-dropdown__trigger')
+            if 'elegir' in v.get_attribute('aria-label').lower():
+                i.click()
+                i.find_elements(By.CLASS_NAME, 'andes-list__item-text')[3].click()
 
         else:
             print('Error, input type new or unrecognized')
@@ -154,7 +169,7 @@ def handle_stock(delta, new_price=''):
             price_in = browser.find_element(By.ID, 'relist-0.item.price')
             if new_price != '':
                 # noinspection PyTypeChecker
-                price_in.send_keys(Keys.BACKSPACE*6 + new_price)
+                price_in.send_keys(Keys.BACKSPACE * 6 + new_price)
             sleep(.8)
             browser.find_elements(By.CLASS_NAME, 'syi-listing-type')[1].click()
             sleep(.3)

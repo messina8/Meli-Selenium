@@ -1,5 +1,5 @@
 # Meli-Selenium
-Small program to automate Mercadolibre time-consuming tasks.
+Smol program to automate Mercadolibre time-consuming tasks.
 
 Requires Selenium WebDriver Chromedriver downloadable from here: https://chromedriver.chromium.org/downloads
 

@@ -31,7 +31,7 @@ def find_publication(search):
     search_bar.send_keys(Keys.BACKSPACE * 35 + search)
     search_button.click()
     print(f'searching for {search_for}')
-    sleep(3)
+    sleep(2.5)
     print(f'{len(browser.find_elements(By.CLASS_NAME, "sc-list-item-row"))} results')
 
 

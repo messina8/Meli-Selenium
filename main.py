@@ -303,6 +303,7 @@ enter the number of choice:""")
 
         except NoSuchWindowException:
             # should detect if browser is still open, in case it got closed.
+            browser.maximize_window()
             window_name = browser.window_handles[0]
             browser.switch_to.window(window_name)
             print('Reference to window was lost and recovered')

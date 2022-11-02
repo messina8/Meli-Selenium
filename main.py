@@ -129,7 +129,7 @@ def change_stock(delta, absolute=False):
         # noinspection PyTypeChecker
         stock.send_keys(Keys.BACKSPACE * 5 + str(new_stock))
     browser.find_elements(By.CLASS_NAME, 'andes-button__content')[0].click()
-    sleep(1)
+    sleep(3)
     popup = True
     while popup:
         try:
@@ -303,7 +303,6 @@ enter the number of choice:""")
 
         except NoSuchWindowException:
             # should detect if browser is still open, in case it got closed.
-            browser.maximize_window()
             window_name = browser.window_handles[0]
             browser.switch_to.window(window_name)
             print('Reference to window was lost and recovered')

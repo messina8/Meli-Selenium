@@ -129,7 +129,13 @@ def change_stock(delta, absolute=False):
         # noinspection PyTypeChecker
         stock.send_keys(Keys.BACKSPACE * 5 + str(new_stock))
     browser.find_elements(By.CLASS_NAME, 'andes-button__content')[0].click()
-    sleep(4)
+    sleep(1)
+    popup = True
+    while popup:
+        try:
+            browser.find_element(By.CLASS_NAME, 'sell-ui-snackbar__message')
+        except NoSuchElementException:
+            popup = False
 
 
 def stock_to_int(string):

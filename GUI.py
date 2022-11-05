@@ -17,7 +17,7 @@ class App(ctki.CTk):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
-        self.textbox = ctki.CTkTextbox(master=self)
+        self.textbox = ctki.CTkTextbox(master=self, state='disabled')
         self.textbox.grid(row=0, column=0, columnspan=3, padx=20, pady=(20, 0), sticky="nsew")
 
         self.tech_check = ctki.CTkCheckBox(master=self, text="Fill Tech", onvalue="on", offvalue="off")
@@ -41,14 +41,28 @@ class App(ctki.CTk):
         self.submit = ctki.CTkButton(master=self, text='Go')
         self.submit.grid(row=4, column=1, columnspan=2, padx=20, pady=20, sticky='ew')
 
-        self.mass_edit = ctki.CTkButton(master=self, text='Mass edit')
-        self.mass_edit.grid(row=4, column=0, padx=20, pady=20, sticky='ew')
+        self.mass_edit_button = ctki.CTkButton(master=self, text='Mass edit', command=self.mass_edit)
+        self.mass_edit_button.grid(row=4, column=0, padx=20, pady=20, sticky='ew')
+        self.mass_edit_button.configure()
 
-    def button_event(self):
-        pass
+        self.log = []
+
+    def mass_edit(self):
+        self.print_out('mass edit working')
 
     def on_closing(self, event=0):
         self.destroy()
+
+    def print_out(self, entry):
+        if len(self.log) < 25:
+            self.log.append(entry)
+        else:
+            del self.log[0]
+            self.log.append(entry)
+        self.textbox.configure(state='normal')
+        self.textbox.delete('1.0', 'end')
+        self.textbox.insert('0.0', '\n'.join(self.log))
+        self.textbox.configure(state='disabled')
 
 
 app = App()

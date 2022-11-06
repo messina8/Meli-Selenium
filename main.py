@@ -67,23 +67,18 @@ def edit_tech():
     tech_view = browser.find_element(By.ID, 'technical_specifications_header_container')
     tech_view.click()
     input_list = browser.find_elements(By.CLASS_NAME, 'modify-ui-attribute-template-with-hint')
-    # pending_items = [a for a in input_list if 'Completá' in a.text]
     for i in input_list:
         if 'string' in i.get_attribute('class'):
-            # print('string')
-            # i.find_element(By.CLASS_NAME, 'andes-form-control__field').send_keys('No disponible')
             v = i.find_element(By.CLASS_NAME, 'andes-form-control__field')
             if v.get_attribute('value') == '':
                 v.send_keys('No disponible')
                 sleep(.3)
         elif 'number' in i.get_attribute('class'):
-            # print('number')
             v = i.find_element(By.CLASS_NAME, 'andes-form-control__field')
             if v.get_attribute('value') == '':
                 v.send_keys('0')
                 sleep(.3)
         elif 'multivalue' in i.get_attribute('class'):
-            # print('multivalue')
             v = i.find_element(By.CLASS_NAME, 'andes-form-control__field')
             if v.get_attribute('value').lower() == 'no aplica':
                 pass
@@ -96,7 +91,6 @@ def edit_tech():
                     pass
 
         elif 'boolean' in i.get_attribute('class'):
-            # print('bool')
             checked = [a for a in i.find_elements(By.CLASS_NAME, 'sell-ui-switch__input') if
                        a.get_attribute('checked')]
             if len(checked) == 0:
@@ -104,7 +98,6 @@ def edit_tech():
                 sleep(.3)
 
         elif 'list' in i.get_attribute('class'):
-            # print('list')
             v = i.find_element(By.CLASS_NAME, 'andes-dropdown__trigger')
             if 'elegir' in v.get_attribute('aria-label').lower():
                 i.click()

@@ -38,7 +38,7 @@ enter the number of choice:""")
                 browser.back()
             elif choice == '2':
                 controller.open_publication(browser)
-                controller.edit_tech()
+                controller.edit_tech(browser)
                 browser.back()
             elif choice == '3':
                 stock_change = input('Enter Stock change: ')
@@ -70,3 +70,4 @@ enter the number of choice:""")
             window_name = browser.window_handles[0]
             browser.switch_to.window(window_name)
             print('Reference to window was lost and recovered')
+

@@ -55,19 +55,33 @@ class App(ctki.CTk):
         self.print_out('mass edit working')
 
     def single_edit(self):
+        price = False
+        tech = False
+        stock = False
         publi_id = self.publication.get()
         self.print_out(f'Looking for {publi_id}')
         if self.price_check.get() == 'on' and self.new_price.get() != '':
+            price = True
             new_price = self.new_price.get()
             self.print_out(f'changing {publi_id} price to {new_price}')
         if self.tech_check.get() == 'on':
+            tech = True
             self.print_out(f'filling {publi_id} specs')
         if self.stock_check.get() == 'on' and self.stock_change.get() != '':
+            stock = True
             self.print_out(f'Chagning stock by {self.stock_change.get()}')
+        if publi_id != '':
+            controller.find_publication(self.browser, publi_id)
+        if price or tech or stock:
+            controller.open_publication(self.browser)
+
+    #     acá tenemos que empezar a chequear que quiere, y uno por uno hacerlo. Debería arrancar con el stock,
+    #     seguir con el precio y terminar con la ficha. El "print" del GUI está esperando mucho, habría
+    #     que ver bien por qué
 
     def on_closing(self, event=0):
         self.destroy()
-        self.browser.close()
+        self.browser.quit()
 
     def print_out(self, entry):
         if len(self.log) < 25:

@@ -66,6 +66,12 @@ def clear_filters(browser):
         for i in reversed(active_filters):
             i.click()
             sleep(1.5)
+    except IndexError:
+        browser.find_element(By.ID, 'filter_trigger').click()
+        sleep(1.5)
+        browser.find_elements(By.CLASS_NAME, 'andes-button--medium andes-button--transparent')
+        [a for a in browser.find_elements(By.CLASS_NAME, 'andes-button') if
+         a.accessible_name == 'Limpiar filtros'][0].click()
 
 
 def handle_stock(browser, delta, new_price=''):

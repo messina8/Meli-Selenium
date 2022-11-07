@@ -1,6 +1,7 @@
 import tkinter
 import tkinter.messagebox
 import customtkinter as ctki
+import selenium_controller as controller
 
 
 class App(ctki.CTk):
@@ -47,6 +48,9 @@ class App(ctki.CTk):
 
         self.log = []
 
+        self.browser = controller.open_driver()
+        controller.load_meli(self.browser)
+
     def mass_edit(self):
         self.print_out('mass edit working')
 
@@ -63,6 +67,7 @@ class App(ctki.CTk):
 
     def on_closing(self, event=0):
         self.destroy()
+        self.browser.close()
 
     def print_out(self, entry):
         if len(self.log) < 25:

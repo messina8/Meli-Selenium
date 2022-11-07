@@ -1,10 +1,10 @@
 from selenium.common.exceptions import NoSuchElementException, NoSuchWindowException
 from autofiller import auto_filler
-import selenium_controller as mel_met
+import selenium_controller as controller
 
 if __name__ == '__main__':
-    browser = mel_met.open_driver()
-    mel_met.load_meli(browser)
+    browser = controller.open_driver()
+    controller.load_meli(browser)
 
     print('Welcome to AutoMeli with Selenium!')
     while True:
@@ -24,21 +24,21 @@ enter the number of choice:""")
             elif choice in ['1', '2', '3']:
                 search_for = input('publi ID or Title: ')
                 try:
-                    mel_met.find_publication(browser, search_for)
+                    controller.find_publication(browser, search_for)
                 except NoSuchElementException or IndexError:
                     choice = 9
                     print('No results found')
             if choice == '1':
                 price = input('New price: ')
                 tech = input('edit specs(Y/N)')
-                mel_met.open_publication(browser)
-                mel_met.edit_price(browser, price)
+                controller.open_publication(browser)
+                controller.edit_price(browser, price)
                 if tech.lower() == "y":
-                    mel_met.edit_tech(browser)
+                    controller.edit_tech(browser)
                 browser.back()
             elif choice == '2':
-                mel_met.open_publication(browser)
-                mel_met.edit_tech()
+                controller.open_publication(browser)
+                controller.edit_tech()
                 browser.back()
             elif choice == '3':
                 stock_change = input('Enter Stock change: ')
@@ -46,18 +46,18 @@ enter the number of choice:""")
                 if change_price.lower() == "y":
                     price = input('New price: ')
                     tech = input('edit specs(Y/N): ')
-                    mel_met.handle_stock(browser, stock_change, new_price=price)
+                    controller.handle_stock(browser, stock_change, new_price=price)
                     if tech == "Y" or tech == "y":
                         try:
-                            mel_met.edit_tech(browser)
+                            controller.edit_tech(browser)
                         except NoSuchElementException:
                             pass
                 else:
                     tech = input('edit specs(Y/N): ')
-                    mel_met.handle_stock(browser, stock_change)
+                    controller.handle_stock(browser, stock_change)
                     if tech.lower() == "y":
-                        mel_met.edit_tech(browser)
-                mel_met.load_meli(browser)
+                        controller.edit_tech(browser)
+                controller.load_meli(browser)
             elif choice == '0':
                 browser.close()
                 exit(0)

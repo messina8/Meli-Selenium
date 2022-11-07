@@ -2,6 +2,7 @@ import pickle
 from time import sleep
 
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, WebDriverException, \
     TimeoutException
 from selenium.webdriver.common.by import By
@@ -12,7 +13,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 def open_driver():
     try:
-        driver = webdriver.Chrome()
+        options = Options()
+        # options.add_argument('--headless')
+        # options.add_argument('--disable-gpu')  # Last I checked this was necessary.
+        driver = webdriver.Chrome(chrome_options=options)
     except WebDriverException:
 
         option = webdriver.ChromeOptions()

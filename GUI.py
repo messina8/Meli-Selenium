@@ -77,7 +77,7 @@ class App(ctki.CTk):
             controller.handle_stock(self.browser, new_stock)
         elif stock and price:
             controller.handle_stock(self.browser, new_stock, new_price)
-        elif stock or price:
+        elif stock or tech:
             controller.open_publication(self.browser)
             if price:
                 controller.edit_price(self.browser, new_price)
@@ -85,6 +85,8 @@ class App(ctki.CTk):
                 controller.edit_tech(self.browser)
         else:
             self.print_out('Nothing to do with this search')
+            return
+        self.browser.back()
 
     #     acá tenemos que empezar a chequear que quiere, y uno por uno hacerlo. Debería arrancar con el stock,
     #     seguir con el precio y terminar con la ficha. El "print" del GUI está esperando mucho, habría

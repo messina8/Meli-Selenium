@@ -69,11 +69,22 @@ class App(ctki.CTk):
             self.print_out(f'filling {publi_id} specs')
         if self.stock_check.get() == 'on' and self.stock_change.get() != '':
             stock = True
+            new_stock = self.stock_change.get()
             self.print_out(f'Chagning stock by {self.stock_change.get()}')
         if publi_id != '':
             controller.find_publication(self.browser, publi_id)
-        if price or tech or stock:
+        if stock and not price:
+            controller.handle_stock(self.browser, new_stock)
+        elif stock and price:
+            controller.handle_stock(self.browser, new_stock, new_price)
+        elif stock or price:
             controller.open_publication(self.browser)
+            if price:
+                controller.edit_price(self.browser, new_price)
+            if tech:
+                controller.edit_tech(self.browser)
+        else:
+            self.print_out('Nothing to do with this search')
 
     #     acá tenemos que empezar a chequear que quiere, y uno por uno hacerlo. Debería arrancar con el stock,
     #     seguir con el precio y terminar con la ficha. El "print" del GUI está esperando mucho, habría

@@ -4,7 +4,7 @@ from time import sleep
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, WebDriverException, \
-    TimeoutException
+    TimeoutException, ElementNotInteractableException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
@@ -36,7 +36,11 @@ def load_meli(browser):
         save_cookie(browser)
 
     browser.get('https://www.mercadolibre.com.ar/publicaciones/listado')
-    clear_filters(browser)
+    try:
+        clear_filters(browser)
+    except ElementNotInteractableException:
+        sleep(1)
+        clear_filters(browser)
 
 
 def save_cookie(browser):
@@ -74,6 +78,15 @@ def clear_filters(browser):
          a.accessible_name == 'Limpiar filtros'][0].click()
 
 
+def popup_handler(browser):
+    popup = True
+    while popup:
+        try:
+            browser.find_element(By.CLASS_NAME, 'sell-ui-snackbar__message')
+        except NoSuchElementException:
+            popup = False
+
+
 def handle_stock(browser, delta, new_price=''):
     first_result = browser.find_elements(By.CLASS_NAME, 'sc-list-item-row')[0]
     stock = first_result.find_element(By.CLASS_NAME, 'sc-list-item-row-description__info')
@@ -87,16 +100,12 @@ def handle_stock(browser, delta, new_price=''):
         sleep(2)
         if 'modificar' in browser.current_url:
             change_stock(browser, delta)
+            popup_handler(browser)
             sleep(1)
         elif 'listado' in browser.current_url:
             open_publication(browser)
             change_stock(browser, delta, absolute=True)
-            popup = True
-            while popup:
-                try:
-                    browser.find_element(By.CLASS_NAME, 'sell-ui-snackbar__message')
-                except NoSuchElementException:
-                    popup = False
+            popup_handler(browser)
             if new_price != '':
                 edit_price(browser, new_price)
         else:
@@ -136,6 +145,7 @@ def handle_stock(browser, delta, new_price=''):
     else:
         open_publication(browser)
         change_stock(browser, delta)
+        popup_handler(browser)
 
 
 def stock_to_int(string):
@@ -180,7 +190,8 @@ def edit_price(browser, updated_price):
         popup.find_elements(By.CLASS_NAME, 'andes-button__content')[0].click()
     except TimeoutException:
         pass
-    sleep(4)
+    sleep(.5)
+    popup_handler(browser)
 
 
 def edit_tech(browser):

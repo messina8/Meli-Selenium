@@ -107,6 +107,3 @@ class App(ctki.CTk):
         self.textbox.insert('0.0', '\n'.join(self.log))
         self.textbox.configure(state='disabled')
 
-
-app = App()
-app.mainloop()

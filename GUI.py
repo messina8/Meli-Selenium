@@ -89,6 +89,7 @@ class App(ctki.CTk):
             if tech:
                 controller.edit_tech(self.browser)
         if tech:
+            controller.open_publication(self.browser)
             controller.edit_tech(self.browser)
         self.browser.back()
 

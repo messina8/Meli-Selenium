@@ -126,8 +126,9 @@ def handle_stock(browser, delta, new_price=''):
             primary_button = browser.find_element(By.CLASS_NAME, 'syi-action-button__primary')
             if '/modificar/' in primary_button.get_attribute('href'):
                 primary_button.click()
+                edit_tech(browser)
             else:
-                pass
+                browser.back()
 
     elif stock_to_int(stock.text) + int(delta) <= 0:
         try:
@@ -192,7 +193,7 @@ def edit_price(browser, updated_price):
         popup.find_elements(By.CLASS_NAME, 'andes-button__content')[0].click()
     except TimeoutException:
         pass
-    sleep(.5)
+    sleep(1.5)
     popup_handler(browser)
 
 

@@ -73,19 +73,23 @@ class App(ctki.CTk):
             self.print_out(f'Changing stock by {self.stock_change.get()}')
         if publi_id != '':
             controller.find_publication(self.browser, publi_id)
-        if stock and not price:
-            controller.handle_stock(self.browser, new_stock)
-        elif stock and price:
-            controller.handle_stock(self.browser, new_stock, new_price)
-        elif price or tech:
-            controller.open_publication(self.browser)
-            if price:
-                controller.edit_price(self.browser, new_price)
-            if tech:
-                controller.edit_tech(self.browser)
         else:
             self.print_out('Nothing to do with this search')
             return
+        if stock:
+            if price:
+                controller.handle_stock(self.browser, new_stock, new_price)
+            else:
+                controller.handle_stock(self.browser, new_stock)
+            if tech:
+                controller.edit_tech(self.browser)
+        if price:
+            controller.open_publication(self.browser)
+            controller.edit_price(self.browser, new_price)
+            if tech:
+                controller.edit_tech(self.browser)
+        if tech:
+            controller.edit_tech(self.browser)
         self.browser.back()
 
     #     acá tenemos que empezar a chequear que quiere, y uno por uno hacerlo. Debería arrancar con el stock,
@@ -106,4 +110,3 @@ class App(ctki.CTk):
         self.textbox.delete('1.0', 'end')
         self.textbox.insert('0.0', '\n'.join(self.log))
         self.textbox.configure(state='disabled')
-

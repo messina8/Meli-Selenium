@@ -4,7 +4,7 @@ from selenium.webdriver.common.keys import Keys
 from time import sleep
 
 
-def auto_filler(browser):
+def auto_filler(browser): # cant find a way to make it work.
     browser.find_element(By.CLASS_NAME, 'sc-list-custom-dropdown__button').click()
     browser.find_elements(By.CLASS_NAME, 'sc-list-custom-dropdown__option-wrapper')[1].click()
     sleep(4)
@@ -43,3 +43,12 @@ def auto_filler(browser):
                 sleep(1)
                 q = browser.find_element(By.CLASS_NAME, 'sc-bulk-textfield__edition_mode')
                 q.send_keys('No disponible' + Keys.ENTER)
+
+
+def mass_filler(browser):
+    browser.find_element(By.ID, 'filter_trigger').click()
+    [a for a in browser.find_elements(By.CLASS_NAME, 'andes-checkbox__label') if a.text == 'Activas'][0].click()
+    [a for a in browser.find_elements(By.CLASS_NAME, 'andes-button__content') if a.text == 'Aplicar'][0].click()
+    for i in browser.find_elements(By.CLASS_NAME, 'sc-list-item-row'):
+        if 'basica' in i.find_element(By.CLASS_NAME, 'sc-list-item-row-quality').text:
+            link = i.find_element(By.CLASS_NAME, 'sc-list-item-row-description__content').get_attribute('href')

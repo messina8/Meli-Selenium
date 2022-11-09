@@ -102,6 +102,8 @@ def handle_stock(browser, delta, new_price=''):
             change_stock(browser, delta)
             popup_handler(browser)
             sleep(1)
+            if new_price != '':
+                edit_price(browser, new_price)
         elif 'listado' in browser.current_url:
             open_publication(browser)
             change_stock(browser, delta, absolute=True)

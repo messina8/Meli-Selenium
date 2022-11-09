@@ -74,7 +74,7 @@ class App(ctki.CTk):
         if publi_id != '':
             controller.find_publication(self.browser, publi_id)
         else:
-            self.print_out('Nothing to do with this search')
+            self.print_out('Nothing to search for')
             return
         if stock:
             if price:
@@ -83,14 +83,16 @@ class App(ctki.CTk):
                 controller.handle_stock(self.browser, new_stock)
             if tech:
                 controller.edit_tech(self.browser)
-        if price:
+        elif price:
             controller.open_publication(self.browser)
             controller.edit_price(self.browser, new_price)
             if tech:
                 controller.edit_tech(self.browser)
-        if tech:
+        elif tech:
             controller.open_publication(self.browser)
             controller.edit_tech(self.browser)
+        else:
+            self.print_out('Nothing to do with this search')
         self.browser.back()
 
     #     acá tenemos que empezar a chequear que quiere, y uno por uno hacerlo. Debería arrancar con el stock,

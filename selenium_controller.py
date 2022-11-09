@@ -193,7 +193,7 @@ def edit_price(browser, updated_price):
         popup.find_elements(By.CLASS_NAME, 'andes-button__content')[0].click()
     except TimeoutException:
         pass
-    sleep(1.5)
+    sleep(2)
     popup_handler(browser)
 
 
@@ -243,6 +243,7 @@ def edit_tech(browser):
     try:
         browser.find_elements(By.CLASS_NAME, 'andes-button__content')[2].click()
         print('Form submitted correctly')
+        sleep(1.2)
     except ElementClickInterceptedException:
         print('Form not submitted')
 

@@ -193,7 +193,7 @@ def edit_price(browser, updated_price):
         popup.find_elements(By.CLASS_NAME, 'andes-button__content')[0].click()
     except TimeoutException:
         pass
-    sleep(2)
+    sleep(3)
     popup_handler(browser)
 
 

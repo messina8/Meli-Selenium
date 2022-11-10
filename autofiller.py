@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -49,20 +50,31 @@ def auto_filler(browser):  # cant find a way to make it work.
 
 
 def mass_filler(browser):
+    print('Starting Mass Filler')
     links = []
+    start = False
     browser.find_element(By.ID, 'filter_trigger').click()
-    WebDriverWait(browser, 2).until(EC.presence_of_element_located((By.CLASS_NAME, 'andes-checkbox__label')))
-    [a for a in browser.find_elements(By.CLASS_NAME, 'andes-checkbox__label') if a.text == 'Activas'][0].click()
-    [a for a in browser.find_elements(By.CLASS_NAME, 'andes-button__content') if a.text == 'Aplicar'][0].click()
-    sleep(.8)
+    if WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CLASS_NAME, 'andes-checkbox__label'))):
+        [a for a in browser.find_elements(By.CLASS_NAME, 'andes-checkbox__label') if a.text == 'Activas'][0].click()
+        [a for a in browser.find_elements(By.CLASS_NAME, 'andes-button__content') if a.text == 'Aplicar'][0].click()
+    else:
+        print('Could not find filters')
+        return
+    WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CLASS_NAME, 'sc-list-item-row')))
+    WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CLASS_NAME, 'sc-list-item-row-quality')))
     for i in browser.find_elements(By.CLASS_NAME, 'sc-list-item-row'):
-        if 'Básica' in i.find_element(By.CLASS_NAME, 'sc-list-item-row-quality').text:
-            link = i.find_element(By.CLASS_NAME, 'sc-list-item-row-description__content').get_attribute('href')
-            links.append(link)
+        try:
+            if 'Básica' in i.find_element(By.CLASS_NAME, 'sc-list-item-row-quality').text:
+                link = i.find_element(By.CLASS_NAME, 'sc-list-item-row-description__content').get_attribute('href')
+                links.append(link)
+        except NoSuchElementException:
+            pass
 
     for pub in links:
         browser.execute_script(f'''window.open("{pub}","_blank");''')
 
+    sleep(3)
+
     for tab in browser.window_handles[1:]:
         browser.switch_to.window(tab)
-        controller.edit_tech()
+        controller.edit_tech(browser)

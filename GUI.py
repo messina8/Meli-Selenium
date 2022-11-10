@@ -55,7 +55,8 @@ class App(ctki.CTk):
 
     def mass_edit(self):
         self.print_out('mass edit working')
-        autofiller.mass_filler()
+        self.browser.maximize_window()
+        autofiller.mass_filler(self.browser)
 
     def single_edit(self):
         price = False

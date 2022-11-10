@@ -74,7 +74,12 @@ def mass_filler(browser):
         browser.execute_script(f'''window.open("{pub}","_blank");''')
 
     sleep(3)
-
     for tab in browser.window_handles[1:]:
         browser.switch_to.window(tab)
         controller.edit_tech(browser)
+
+    for tab in browser.window_handles[1:]:
+        browser.switch_to.window(tab)
+        browser.close()
+
+    browser.find_elements(By.CLASS_NAME, 'andes-pagination__button')[-1].click()

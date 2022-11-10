@@ -48,6 +48,9 @@ class App(ctki.CTk):
         self.mass_edit_button.grid(row=4, column=0, padx=20, pady=20, sticky='ew')
         self.mass_edit_button.configure()
 
+        self.refresh = ctki.CTkButton(master=self, text='Refresh', command=self.refresh)
+        self.refresh.grid(row=2, column=0, columnspan=1, padx=20, pady=20, sticky='ew')
+
         self.log = []
 
         self.browser = controller.open_driver()
@@ -57,6 +60,9 @@ class App(ctki.CTk):
         self.print_out('mass edit working')
         self.browser.maximize_window()
         autofiller.mass_filler(self.browser)
+
+    def refresh(self):
+        self.browser.refresh()
 
     def single_edit(self):
         price = False

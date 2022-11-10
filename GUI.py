@@ -38,7 +38,7 @@ class App(ctki.CTk):
         self.stock_change = ctki.CTkEntry(master=self, placeholder_text='Enter stock change')
         self.stock_change.grid(row=2, column=2, padx=20, pady=20, sticky='ew')
 
-        self.publication = ctki.CTkEntry(master=self, placeholder_text='Enter title or publi ID')
+        self.publication = ctki.CTkEntry(master=self, placeholder_text='Enter title or publi ID', command=self.single_edit)
         self.publication.grid(row=3, column=0, columnspan=3, padx=20, pady=20, sticky='ew')
 
         self.submit = ctki.CTkButton(master=self, text='Go', command=self.single_edit)

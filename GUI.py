@@ -1,6 +1,8 @@
 import tkinter
 import tkinter.messagebox
 import customtkinter as ctki
+
+import autofiller
 import selenium_controller as controller
 
 
@@ -53,6 +55,7 @@ class App(ctki.CTk):
 
     def mass_edit(self):
         self.print_out('mass edit working')
+        autofiller.mass_filler()
 
     def single_edit(self):
         price = False
@@ -113,3 +116,4 @@ class App(ctki.CTk):
         self.textbox.delete('1.0', 'end')
         self.textbox.insert('0.0', '\n'.join(self.log))
         self.textbox.configure(state='disabled')
+        self.textbox.update()

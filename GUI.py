@@ -59,9 +59,11 @@ class App(ctki.CTk):
     def mass_edit(self):
         self.print_out('mass edit working')
         self.browser.maximize_window()
-        autofiller.mass_filler(self.browser)
+        result = autofiller.mass_filler(self.browser)
+        self.print_out(result)
 
     def refresh(self):
+        self.browser.switch_to.window(self.browser.current_window_handle)
         self.browser.refresh()
 
     def single_edit(self):

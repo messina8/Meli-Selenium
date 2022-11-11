@@ -15,7 +15,7 @@ def open_driver():
     try:
         options = Options()
         # options.add_argument('--headless')
-        # options.add_argument('--disable-gpu')  # Last I checked this was necessary.
+        # options.add_argument('--disable-gpu')
         driver = webdriver.Chrome(chrome_options=options)
     except WebDriverException:
 
@@ -49,7 +49,7 @@ def save_cookie(browser):
 
 
 def load_cookie(browser):
-    with open("cookie", 'rb') as cookies_file:
+    with open("cookie2", 'rb') as cookies_file:
         cookies = pickle.load(cookies_file)
         for cookie in cookies:
             # print(cookie)

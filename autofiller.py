@@ -52,34 +52,48 @@ def auto_filler(browser):  # cant find a way to make it work.
 def mass_filler(browser):
     print('Starting Mass Filler')
     links = []
-    start = False
-    browser.find_element(By.ID, 'filter_trigger').click()
-    if WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CLASS_NAME, 'andes-checkbox__label'))):
-        [a for a in browser.find_elements(By.CLASS_NAME, 'andes-checkbox__label') if a.text == 'Activas'][0].click()
-        [a for a in browser.find_elements(By.CLASS_NAME, 'andes-button__content') if a.text == 'Aplicar'][0].click()
-    else:
-        print('Could not find filters')
-        return
-    WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CLASS_NAME, 'sc-list-item-row')))
-    WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CLASS_NAME, 'sc-list-item-row-quality')))
-    for i in browser.find_elements(By.CLASS_NAME, 'sc-list-item-row'):
+    active = True
+    browser.get('https://www.mercadolibre.com.ar/publicaciones/listado?filters=ACTIVE&page=1&sort=DEFAULT')
+    # browser.find_element(By.ID, 'filter_trigger').click()
+    # try:
+    #     WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CLASS_NAME, 'andes-checkbox__label')))
+    #     [a for a in browser.find_elements(By.CLASS_NAME, 'andes-checkbox__label') if a.text == 'Activas'][0].click()
+    #     [a for a in browser.find_elements(By.CLASS_NAME, 'andes-button__content') if a.text == 'Aplicar'][0].click()
+    # except IndexError:
+    #     print('Could not find filters')
+    #     return 'Could not find filters'
+    while active:
+        WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CLASS_NAME, 'sc-list-item-row')))
+        WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CLASS_NAME, 'sc-list-item-row-quality')))
+        for i in browser.find_elements(By.CLASS_NAME, 'sc-list-item-row'):
+            try:
+                if 'Básica' in i.find_element(By.CLASS_NAME, 'sc-list-item-row-quality').text:
+                    link = i.find_element(By.CLASS_NAME, 'sc-list-item-row-description__content').get_attribute('href')
+                    links.append(link)
+            except NoSuchElementException:
+                pass
+
+        for pub in links:
+            browser.execute_script(f'''window.open("{pub}","_blank");''')
+
+        sleep(3)
+        for tab in browser.window_handles[1:]:
+            browser.switch_to.window(tab)
+            try:
+                controller.edit_tech(browser)
+            except NoSuchElementException:
+                print(f'Error loading page {browser.current_url}')
+
+        for tab in browser.window_handles[1:]:
+            browser.switch_to.window(tab)
+            browser.close()
+
+        browser.switch_to.window(browser.window_handles[0])
+        browser.find_element(By.TAG_NAME, 'html').send_keys(Keys.END)
+        sleep(1.5)
         try:
-            if 'Básica' in i.find_element(By.CLASS_NAME, 'sc-list-item-row-quality').text:
-                link = i.find_element(By.CLASS_NAME, 'sc-list-item-row-description__content').get_attribute('href')
-                links.append(link)
+            browser.find_elements(By.CLASS_NAME, 'andes-pagination__button')[-1].click()
+            sleep(1)
         except NoSuchElementException:
-            pass
-
-    for pub in links:
-        browser.execute_script(f'''window.open("{pub}","_blank");''')
-
-    sleep(3)
-    for tab in browser.window_handles[1:]:
-        browser.switch_to.window(tab)
-        controller.edit_tech(browser)
-
-    for tab in browser.window_handles[1:]:
-        browser.switch_to.window(tab)
-        browser.close()
-
-    browser.find_elements(By.CLASS_NAME, 'andes-pagination__button')[-1].click()
+            active = False
+            return 'Mass editing finished'

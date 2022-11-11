@@ -49,7 +49,7 @@ def save_cookie(browser):
 
 
 def load_cookie(browser):
-    with open("cookie2", 'rb') as cookies_file:
+    with open("cookie", 'rb') as cookies_file:
         cookies = pickle.load(cookies_file)
         for cookie in cookies:
             # print(cookie)

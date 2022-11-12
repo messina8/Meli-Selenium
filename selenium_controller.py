@@ -104,6 +104,7 @@ def handle_stock(browser, delta, new_price=''):
             sleep(1)
             if new_price != '':
                 edit_price(browser, new_price)
+                edit_tech(browser)
         elif 'listado' in browser.current_url:
             open_publication(browser)
             change_stock(browser, delta, absolute=True)
@@ -130,7 +131,7 @@ def handle_stock(browser, delta, new_price=''):
             else:
                 browser.back()
 
-    elif stock_to_int(stock.text) + int(delta) <= 0:
+    elif stock_to_int(stock.text) + int(delta) <= 0 and stock_to_int(stock.text) < 0:
         try:
             first_result.find_element(By.CLASS_NAME, 'sc-trigger-content__trigger').click()
             sleep(1)
@@ -198,54 +199,66 @@ def edit_price(browser, updated_price):
 
 
 def edit_tech(browser):
-    tech_view = browser.find_element(By.ID, 'technical_specifications_header_container')
-    tech_view.click()
-    input_list = browser.find_elements(By.CLASS_NAME, 'modify-ui-attribute-template-with-hint')
-    for i in input_list:
-        if 'string' in i.get_attribute('class'):
-            v = i.find_element(By.CLASS_NAME, 'andes-form-control__field')
-            if v.get_attribute('value') == '':
-                v.send_keys('No disponible')
-                sleep(.3)
-        elif 'number' in i.get_attribute('class'):
-            v = i.find_element(By.CLASS_NAME, 'andes-form-control__field')
-            if v.get_attribute('value') == '':
-                v.send_keys('0')
-                sleep(.3)
-        elif 'multivalue' in i.get_attribute('class'):
-            v = i.find_element(By.CLASS_NAME, 'andes-form-control__field')
-            if v.get_attribute('value').lower() == 'no aplica':
-                pass
-            else:
-                v = i.find_elements(By.CLASS_NAME, 'andes-tag')
-                if len(v) == 0:
-                    i.find_element(By.CLASS_NAME, 'andes-form-control__field').send_keys('No disponible' + Keys.ENTER)
-                    sleep(.3)
-                else:
-                    pass
-
-        elif 'boolean' in i.get_attribute('class'):
-            checked = [a for a in i.find_elements(By.CLASS_NAME, 'sell-ui-switch__input') if
-                       a.get_attribute('checked')]
-            if len(checked) == 0:
-                i.find_elements(By.CLASS_NAME, 'sell-ui-switch__option')[1].click()
-                sleep(.3)
-
-        elif 'list' in i.get_attribute('class'):
-            v = i.find_element(By.CLASS_NAME, 'andes-dropdown__trigger')
-            if 'elegir' in v.get_attribute('aria-label').lower():
-                i.click()
-                i.find_elements(By.CLASS_NAME, 'andes-list__item-text')[3].click()
-                sleep(.3)
-        else:
-            print('Error, input type new or unrecognized')
-
     try:
-        browser.find_elements(By.CLASS_NAME, 'andes-button__content')[2].click()
-        print('Form submitted correctly')
-        sleep(1.2)
-    except ElementClickInterceptedException:
-        print('Form not submitted')
+        tech_view = WebDriverWait(browser, 5).until(
+            EC.presence_of_element_located((By.ID, 'technical_specifications_header_container')))
+        # tech_view = browser.find_element(By.ID, 'technical_specifications_header_container')
+    except TimeoutException:
+        return "Page took to long to load, couldn't edit specs"
+
+    state = tech_view.find_element(By.CLASS_NAME, 'sell-ui-card-header-title__text').text
+    if 'incompleta' in state.lower():
+        tech_view.click()
+        input_list = browser.find_elements(By.CLASS_NAME, 'modify-ui-attribute-template-with-hint')
+        for i in input_list:
+            if 'string' in i.get_attribute('class'):
+                v = i.find_element(By.CLASS_NAME, 'andes-form-control__field')
+                if v.get_attribute('value') == '':
+                    v.send_keys('No disponible')
+                    sleep(.3)
+            elif 'number' in i.get_attribute('class'):
+                v = i.find_element(By.CLASS_NAME, 'andes-form-control__field')
+                if v.get_attribute('value') == '':
+                    v.send_keys('0')
+                    sleep(.3)
+            elif 'multivalue' in i.get_attribute('class'):
+                v = i.find_element(By.CLASS_NAME, 'andes-form-control__field')
+                if v.get_attribute('value').lower() == 'no aplica':
+                    pass
+                else:
+                    v = i.find_elements(By.CLASS_NAME, 'andes-tag')
+                    if len(v) == 0:
+                        i.find_element(By.CLASS_NAME, 'andes-form-control__field').send_keys('No disponible' + Keys.ENTER)
+                        sleep(.3)
+                    else:
+                        pass
+
+            elif 'boolean' in i.get_attribute('class'):
+                checked = [a for a in i.find_elements(By.CLASS_NAME, 'sell-ui-switch__input') if
+                           a.get_attribute('checked')]
+                if len(checked) == 0:
+                    i.find_elements(By.CLASS_NAME, 'sell-ui-switch__option')[1].click()
+                    sleep(.3)
+
+            elif 'list' in i.get_attribute('class'):
+                v = i.find_element(By.CLASS_NAME, 'andes-dropdown__trigger')
+                if 'elegir' in v.get_attribute('aria-label').lower():
+                    i.click()
+                    i.find_elements(By.CLASS_NAME, 'andes-list__item-text')[3].click()
+                    sleep(.3)
+            else:
+                print('Error, input type new or unrecognized')
+
+        try:
+            browser.find_elements(By.CLASS_NAME, 'andes-button__content')[2].click()
+            sleep(1.2)
+            return "Tech specs filled correctly"
+        except ElementClickInterceptedException:
+            print('Form not submitted')
+            return "Something went wrong, couldn't finish"
+
+    else:
+        return "Tech specs already full."
 
 
 def change_stock(browser, delta, absolute=False):
@@ -258,9 +271,4 @@ def change_stock(browser, delta, absolute=False):
         stock.send_keys(Keys.BACKSPACE * 5 + str(new_stock))
     browser.find_elements(By.CLASS_NAME, 'andes-button__content')[0].click()
     sleep(3)
-    popup = True
-    while popup:
-        try:
-            browser.find_element(By.CLASS_NAME, 'sell-ui-snackbar__message')
-        except NoSuchElementException:
-            popup = False
+    popup_handler(browser)

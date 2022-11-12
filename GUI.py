@@ -63,6 +63,7 @@ class App(ctki.CTk):
         self.print_out(result)
 
     def refresh(self):
+        self.print_out('Refreshing page')
         self.browser.switch_to.window(self.browser.current_window_handle)
         self.browser.refresh()
 
@@ -71,23 +72,23 @@ class App(ctki.CTk):
         tech = False
         stock = False
         publi_id = self.publication.get()
-        self.print_out(f'Looking for {publi_id}')
-        if self.price_check.get() == 'on' and self.new_price.get() != '':
-            price = True
-            new_price = self.new_price.get()
-            self.print_out(f'changing {publi_id} price to {new_price}')
-        if self.tech_check.get() == 'on':
-            tech = True
-            self.print_out(f'filling {publi_id} specs')
-        if self.stock_check.get() == 'on' and self.stock_change.get() != '':
-            stock = True
-            new_stock = self.stock_change.get()
-            self.print_out(f'Changing stock by {self.stock_change.get()}')
         if publi_id != '':
+            self.print_out(f'Looking for {publi_id}')
             controller.find_publication(self.browser, publi_id)
         else:
             self.print_out('Nothing to search for')
             return
+        if self.price_check.get() == 'on' and self.new_price.get() != '':
+            price = True
+            new_price = self.new_price.get()
+            # self.print_out(f'changing {publi_id} price to {new_price}')
+        if self.tech_check.get() == 'on':
+            tech = True
+            # self.print_out(f'filling {publi_id} specs')
+        if self.stock_check.get() == 'on' and self.stock_change.get() != '':
+            stock = True
+            new_stock = self.stock_change.get()
+            # self.print_out(f'Changing stock by {self.stock_change.get()}')
         if stock:
             if price:
                 controller.handle_stock(self.browser, new_stock, new_price)
@@ -99,10 +100,10 @@ class App(ctki.CTk):
             controller.open_publication(self.browser)
             controller.edit_price(self.browser, new_price)
             if tech:
-                controller.edit_tech(self.browser)
+                self.print_out(controller.edit_tech(self.browser))
         elif tech:
             controller.open_publication(self.browser)
-            controller.edit_tech(self.browser)
+            self.print_out(controller.edit_tech(self.browser))
         else:
             self.print_out('Nothing to do with this search')
         self.browser.back()

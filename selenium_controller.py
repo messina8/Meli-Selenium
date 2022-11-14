@@ -228,7 +228,8 @@ def edit_tech(browser):
                 else:
                     v = i.find_elements(By.CLASS_NAME, 'andes-tag')
                     if len(v) == 0:
-                        i.find_element(By.CLASS_NAME, 'andes-form-control__field').send_keys('No disponible' + Keys.ENTER)
+                        i.find_element(By.CLASS_NAME, 'andes-form-control__field').send_keys(
+                            'No disponible' + Keys.ENTER)
                         sleep(.3)
                     else:
                         pass

@@ -1,5 +1,5 @@
 from selenium import webdriver
-from selenium.common import NoSuchElementException
+from selenium.common import NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -70,7 +70,7 @@ def mass_filler(browser):
                 if 'Básica' in i.find_element(By.CLASS_NAME, 'sc-list-item-row-quality').text:
                     link = i.find_element(By.CLASS_NAME, 'sc-list-item-row-description__content').get_attribute('href')
                     links.append(link)
-            except NoSuchElementException:
+            except NoSuchElementException or StaleElementReferenceException:
                 pass
 
         for pub in links:
@@ -93,7 +93,7 @@ def mass_filler(browser):
         sleep(1.5)
         try:
             browser.find_elements(By.CLASS_NAME, 'andes-pagination__button')[-1].click()
-            sleep(1)
+            sleep(2)
         except NoSuchElementException:
             active = False
             return 'Mass editing finished'

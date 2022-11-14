@@ -84,6 +84,8 @@ def mass_filler(browser):
             except NoSuchElementException:
                 print(f'Error loading page {browser.current_url}')
 
+        sleep(2)
+
         for tab in browser.window_handles[1:]:
             browser.switch_to.window(tab)
             browser.close()
@@ -93,7 +95,7 @@ def mass_filler(browser):
         sleep(1.5)
         try:
             browser.find_elements(By.CLASS_NAME, 'andes-pagination__button')[-1].click()
-            sleep(2)
+            # sleep(3)
         except NoSuchElementException:
             active = False
             return 'Mass editing finished'

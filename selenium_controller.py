@@ -127,7 +127,10 @@ def handle_stock(browser, delta, new_price=''):
             primary_button = browser.find_element(By.CLASS_NAME, 'syi-action-button__primary')
             if '/modificar/' in primary_button.get_attribute('href'):
                 primary_button.click()
+                sleep(2)
                 edit_tech(browser)
+                sleep(1)
+                browser.back()
             else:
                 browser.back()
 

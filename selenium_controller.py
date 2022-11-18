@@ -131,7 +131,7 @@ def handle_stock(browser, delta, new_price=''):
             else:
                 browser.back()
 
-    elif stock_to_int(stock.text) + int(delta) <= 0 and stock_to_int(stock.text) < 0:
+    elif stock_to_int(stock.text) + int(delta) <= 0 and stock_to_int(stock.text) > 0:
         try:
             first_result.find_element(By.CLASS_NAME, 'sc-trigger-content__trigger').click()
             sleep(1)

@@ -84,7 +84,7 @@ def mass_filler(browser):
             except NoSuchElementException:
                 print(f'Error loading page {browser.current_url}')
 
-        sleep(2)
+        sleep(3)
 
         for tab in browser.window_handles[1:]:
             browser.switch_to.window(tab)
@@ -93,6 +93,7 @@ def mass_filler(browser):
         browser.switch_to.window(browser.window_handles[0])
         browser.find_element(By.TAG_NAME, 'html').send_keys(Keys.END)
         sleep(1.5)
+        links = []
         try:
             browser.find_elements(By.CLASS_NAME, 'andes-pagination__button')[-1].click()
             # sleep(3)

@@ -1,6 +1,7 @@
 import tkinter
 import tkinter.messagebox
 import customtkinter as ctki
+from selenium.common import NoSuchWindowException
 
 import autofiller
 import selenium_controller as controller
@@ -64,8 +65,12 @@ class App(ctki.CTk):
 
     def refresh(self):
         self.print_out('Refreshing page')
-        self.browser.switch_to.window(self.browser.current_window_handle)
-        self.browser.refresh()
+        try:
+            self.browser.switch_to.window(self.browser.current_window_handle)
+            self.browser.refresh()
+        except NoSuchWindowException:
+            self.browser.switch_to.window(self.browser.window_handles[0])
+            self.print_out('Reference to window was lost and recovered')
 
     def single_edit(self):
         price = False

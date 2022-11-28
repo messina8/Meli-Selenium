@@ -217,12 +217,12 @@ def edit_tech(browser):
             if 'string' in i.get_attribute('class'):
                 v = i.find_element(By.CLASS_NAME, 'andes-form-control__field')
                 if v.get_attribute('value') == '':
-                    v.send_keys('No disponible')
+                    v.send_keys('No disponible' + Keys.ENTER)
                     sleep(.3)
             elif 'number' in i.get_attribute('class'):
                 v = i.find_element(By.CLASS_NAME, 'andes-form-control__field')
                 if v.get_attribute('value') == '':
-                    v.send_keys('0')
+                    v.send_keys('0' + Keys.ENTER)
                     sleep(.3)
             elif 'multivalue' in i.get_attribute('class'):
                 v = i.find_element(By.CLASS_NAME, 'andes-form-control__field')
@@ -255,7 +255,7 @@ def edit_tech(browser):
 
         try:
             browser.find_elements(By.CLASS_NAME, 'andes-button__content')[2].click()
-            sleep(1.2)
+            sleep(1.5)
             return "Tech specs filled correctly"
         except ElementClickInterceptedException:
             print('Form not submitted')

@@ -67,11 +67,14 @@ def mass_filler(browser):
         WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CLASS_NAME, 'sc-list-item-row-quality')))
         for i in browser.find_elements(By.CLASS_NAME, 'sc-list-item-row'):
             try:
-                if 'Básica' in i.find_element(By.CLASS_NAME, 'sc-list-item-row-quality').text:
+                status = i.find_element(By.CLASS_NAME, 'sc-list-item-row-quality').text
+                if 'Básica' in status or 'erdiendo' in status:
                     link = i.find_element(By.CLASS_NAME, 'sc-list-item-row-description__content').get_attribute('href')
                     links.append(link)
             except NoSuchElementException or StaleElementReferenceException:
                 pass
+
+        sleep(1.5)
 
         for pub in links:
             browser.execute_script(f'''window.open("{pub}","_blank");''')

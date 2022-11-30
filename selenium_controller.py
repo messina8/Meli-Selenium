@@ -12,17 +12,16 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 
 def open_driver():
-    try:
-        options = Options()
-        # options.add_argument('--headless')
-        # options.add_argument('--disable-gpu')
-        driver = webdriver.Chrome(chrome_options=options)
-    except WebDriverException:
-
-        option = webdriver.ChromeOptions()
-        option.binary_location = r'C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe'
-        driver = webdriver.Chrome(options=option)
-    return driver
+    # try:
+    #     options = Options()
+    #     # options.add_argument('--headless')
+    #     # options.add_argument('--disable-gpu')
+    #     driver = webdriver.Chrome(chrome_options=options)
+    # except WebDriverException:
+    #     option = webdriver.ChromeOptions()
+    #     option.binary_location = r'C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe'
+    #     driver = webdriver.Chrome(options=option)
+    return webdriver.Chrome()
 
 
 def load_meli(browser):

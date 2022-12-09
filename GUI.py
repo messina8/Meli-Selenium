@@ -114,14 +114,11 @@ class App(ctki.CTk):
         if stock or price or tech:
             self.browser.back()
         self.publication.delete('0', 'end')
-        # self.new_price.delete('0', 'end')
-        # self.stock_change.delete('0', 'end')
+        self.new_price.delete('0', 'end')
+        self.stock_change.delete('0', 'end')
         # self.tech_check.deselect()
-        self.price_check.deselect()
-        self.stock_check.deselect()
-    #     acá tenemos que empezar a chequear que quiere, y uno por uno hacerlo. Debería arrancar con el stock,
-    #     seguir con el precio y terminar con la ficha. El "print" del GUI está esperando mucho, habría
-    #     que ver bien por qué
+        # self.price_check.deselect()
+        # self.stock_check.deselect()
 
     def on_closing(self, event=0):
         self.destroy()

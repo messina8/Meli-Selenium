@@ -95,7 +95,7 @@ def handle_stock(browser, delta, new_price=''):
         first_result.find_element(By.CLASS_NAME, 'sc-trigger-content__trigger').click()
         sleep(1.2)
         [a for a in first_result.find_elements(By.CLASS_NAME, 'andes-list__item') if
-         a.text.lower() in ['reactivar', 'republicar']][0].click()
+         a.text.lower() in ['reactivar', 'republicar', 'recadastrar']][0].click()
         sleep(2)
         if 'modificar' in browser.current_url:
             change_stock(browser, delta)
@@ -253,7 +253,8 @@ def edit_tech(browser):
                 print('Error, input type new or unrecognized')
 
         try:
-            browser.find_elements(By.CLASS_NAME, 'andes-button__content')[2].click()
+            submit = browser.find_elements(By.CLASS_NAME, 'andes-button__content')[2]
+            browser.execute_script("arguments[0].click();", submit)
             sleep(1.5)
             return "Tech specs filled correctly"
         except ElementClickInterceptedException:

@@ -26,12 +26,15 @@ class App(ctki.CTk):
 
         self.tech_check = ctki.CTkCheckBox(master=self, text="Fill Tech", onvalue="on", offvalue="off")
         self.tech_check.grid(row=1, column=0, padx=20, pady=20, sticky='')
+        self.tech_check.select()
 
         self.price_check = ctki.CTkCheckBox(master=self, text="Change Price", onvalue="on", offvalue="off")
         self.price_check.grid(row=1, column=1, padx=20, pady=20, sticky='')
+        self.price_check.select()
 
         self.stock_check = ctki.CTkCheckBox(master=self, text="Change Stock", onvalue="on", offvalue="off")
         self.stock_check.grid(row=1, column=2, padx=20, pady=20, sticky='')
+        self.stock_check.select()
 
         self.new_price = ctki.CTkEntry(master=self, placeholder_text='Enter new price')
         self.new_price.grid(row=2, column=1, padx=20, pady=20, sticky='ew')
@@ -86,10 +89,8 @@ class App(ctki.CTk):
         if self.price_check.get() == 'on' and self.new_price.get() != '':
             price = True
             new_price = self.new_price.get()
-            # self.print_out(f'changing {publi_id} price to {new_price}')
         if self.tech_check.get() == 'on':
             tech = True
-            # self.print_out(f'filling {publi_id} specs')
         if self.stock_check.get() == 'on' and self.stock_change.get() != '':
             stock = True
             new_stock = self.stock_change.get()

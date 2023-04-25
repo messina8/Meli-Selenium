@@ -8,7 +8,10 @@ import selenium_controller as controller
 from time import sleep
 
 
-def auto_filler(browser):  # cant find a way to make it work.
+def auto_filler(browser, page_number=0):
+    if page_number != 0:
+        browser.get(f'https://www.mercadolibre.com.ar/publicaciones/listado?filters=ACTIVE&page={page_number}'
+                    f'&sort=DEFAULT')
     browser.find_element(By.CLASS_NAME, 'sc-list-custom-dropdown__button').click()
     browser.find_elements(By.CLASS_NAME, 'sc-list-custom-dropdown__option-wrapper')[1].click()
     sleep(4)
@@ -49,11 +52,11 @@ def auto_filler(browser):  # cant find a way to make it work.
                 q.send_keys('No disponible' + Keys.ENTER)
 
 
-def mass_filler(browser):
+def mass_filler(browser, page_number=1):
     print('Starting Mass Filler')
     links = []
     active = True
-    browser.get('https://www.mercadolibre.com.ar/publicaciones/listado?filters=ACTIVE&page=1&sort=DEFAULT')
+    browser.get(f'https://www.mercadolibre.com.ar/publicaciones/listado?filters=ACTIVE&page={page_number}&sort=DEFAULT')
     # browser.find_element(By.ID, 'filter_trigger').click()
     # try:
     #     WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CLASS_NAME, 'andes-checkbox__label')))

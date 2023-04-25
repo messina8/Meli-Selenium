@@ -63,7 +63,10 @@ class App(ctki.CTk):
     def mass_edit(self):
         self.print_out('mass edit working')
         self.browser.maximize_window()
-        result = autofiller.mass_filler(self.browser)
+        if self.new_price.get() != '':
+            result = autofiller.mass_filler(self.browser, page_number=int(self.new_price.get()))
+        else:
+            result = autofiller.mass_filler(self.browser)
         self.print_out(result)
 
     def refresh(self):

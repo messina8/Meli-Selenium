@@ -133,7 +133,7 @@ def handle_stock(browser, delta, new_price=''):
             else:
                 browser.back()
 
-    elif stock_to_int(stock.text) + int(delta) <= 0 and stock_to_int(stock.text) > 0:
+    elif (stock_to_int(stock.text) + int(delta) <= 0) and stock_to_int(stock.text) > 0:
         try:
             first_result.find_element(By.CLASS_NAME, 'sc-trigger-content__trigger').click()
             sleep(1)
@@ -247,7 +247,7 @@ def edit_tech(browser):
                 v = i.find_element(By.CLASS_NAME, 'andes-dropdown__trigger')
                 if 'elegir' in v.get_attribute('aria-label').lower():
                     i.click()
-                    i.find_elements(By.CLASS_NAME, 'andes-list__item-text')[3].click()
+                    i.find_elements(By.CLASS_NAME, 'andes-list__item-text')[-1].click()
                     sleep(.3)
             else:
                 print('Error, input type new or unrecognized')
